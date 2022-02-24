@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import './App.css';
 import {Sprite, Stage} from '@inlet/react-pixi'
 import myFirstUnitImage from './assets/img/units/my_first_unit/goodSoupMobil.png'
+import Login from "./Login";
+import GetServerInfos from "./GetServerInfos";
 
 function App() {
     return (
@@ -21,6 +23,8 @@ function App() {
                     Learn React
                 </a>
             </header>
+            <Login/>
+            <GetServerInfos/>
             <Stage>
                 <Sprite image={myFirstUnitImage} x={100} y={100}/>
             </Stage>
