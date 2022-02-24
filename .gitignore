@@ -297,3 +297,5 @@ dist
 # Sonarlint plugin
 
 # End of https://www.toptal.com/developers/gitignore/api/node,intellij+all,webstorm+all
+
+build/
