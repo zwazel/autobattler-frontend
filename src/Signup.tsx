@@ -13,17 +13,16 @@ export default function Signup() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [userLoginInfo, setUserLoginInfo] = useState<userLoginInfos>({
-        usernameMinLength: 0,
-        usernameMaxLength: 0,
-        passwordMinLength: 0,
-        passwordMaxLength: 0
+        usernameMinLength: -1,
+        usernameMaxLength: -1,
+        passwordMinLength: -1,
+        passwordMaxLength: -1
     });
 
     useEffect(() => {
         fetch("public/server/userLoginInfo")
             .then(r => r.json())
             .then(r => {
-                console.log(r);
                 setUserLoginInfo(r);
             })
     }, []);
@@ -33,8 +32,27 @@ export default function Signup() {
             username.length <= userLoginInfo.usernameMaxLength && password.length <= userLoginInfo.passwordMaxLength;
     }
 
-    function handleSubmit(event: { preventDefault: () => void; }) {
+    async function handleSubmit(event: { preventDefault: () => void; }) {
         event.preventDefault();
+
+        const response = await fetch("auth/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+
+        if (response.ok) {
+            // window.location.href = "/";
+            alert("Successfully signed up!");
+            console.log(response.json());
+        } else {
+            alert("Signup failed");
+        }
     }
 
     return (
@@ -52,7 +70,7 @@ export default function Signup() {
             </Form.Group>
 
             <Button size="lg" type="submit" disabled={!validateForm()}>
-                Login
+                Signup
             </Button>
         </Form>
     );
