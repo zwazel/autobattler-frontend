@@ -16,8 +16,10 @@ export default function SignIn() {
         const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/signin`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 'username': username,
                 'password': password
@@ -26,6 +28,7 @@ export default function SignIn() {
 
         if (response.ok) {
             // window.location.href = "/";
+            console.log(response); // undefined
             alert("Successfully signed in!");
         } else {
             alert("Sign in failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
