@@ -9,7 +9,7 @@ export default function GetServerInfos() {
     const [serverInfos, setServerInfos] = useState<ServerInfo[]>([]);
 
     useEffect(() => {
-        fetch(`${process.env.FETCH_CALL_DOMAIN}/public/server/info`)
+        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/public/server/info`)
             .then(r => r.json())
             .then(r => {
                 setServerInfos(r);
@@ -19,7 +19,7 @@ export default function GetServerInfos() {
     return (
         <div>
             <h1>GetServerInfos</h1>
-            
+
             <ul>
                 {serverInfos.map(serverInfo => (
                     <li key={serverInfo.name}>

@@ -13,7 +13,7 @@ export default function SignIn() {
     async function handleSubmit(event: { preventDefault: () => void; }) {
         event.preventDefault();
 
-        const response = await fetch(`${process.env.FETCH_CALL_DOMAIN}/auth/signin`, {
+        const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/signin`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
