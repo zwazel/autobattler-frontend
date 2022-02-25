@@ -5,14 +5,13 @@ interface ServerInfo {
     value: string;
 }
 
-function GetServerInfos() {
+export default function GetServerInfos() {
     const [serverInfos, setServerInfos] = useState<ServerInfo[]>([]);
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/public/server/info")
+        fetch("public/server/info")
             .then(r => r.json())
             .then(r => {
-                console.log(r);
                 setServerInfos(r);
             })
     }, []);
@@ -31,5 +30,3 @@ function GetServerInfos() {
         </div>
     );
 }
-
-export default GetServerInfos;

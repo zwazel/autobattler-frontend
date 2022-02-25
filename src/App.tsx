@@ -3,10 +3,10 @@ import logo from './logo.svg';
 import './App.css';
 import {Sprite, Stage} from '@inlet/react-pixi'
 import myFirstUnitImage from './assets/img/units/my_first_unit/goodSoupMobil.png'
-import Login from "./Login";
+import Signup from "./Signup";
 import GetServerInfos from "./GetServerInfos";
 
-function App() {
+export default function App() {
     return (
         <div className="App">
             <header className="App-header">
@@ -23,7 +23,7 @@ function App() {
                     Learn React
                 </a>
             </header>
-            <Login/>
+            <Signup/>
             <GetServerInfos/>
             <Stage>
                 <Sprite image={myFirstUnitImage} x={100} y={100}/>
@@ -31,5 +31,3 @@ function App() {
         </div>
     );
 }
-
-export default App;
