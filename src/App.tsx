@@ -3,8 +3,9 @@ import logo from './logo.svg';
 import './App.css';
 import {Sprite, Stage} from '@inlet/react-pixi'
 import myFirstUnitImage from './assets/img/units/my_first_unit/goodSoupMobil.png'
-import Signup from "./Signup";
-import GetServerInfos from "./GetServerInfos";
+import Signup from "./components/auth/Signup";
+import GetServerInfos from "./components/misc/GetServerInfos";
+import SignIn from "./components/auth/Signin";
 
 export default function App() {
     return (
@@ -24,6 +25,7 @@ export default function App() {
                 </a>
             </header>
             <Signup/>
+            <SignIn/>
             <GetServerInfos/>
             <Stage>
                 <Sprite image={myFirstUnitImage} x={100} y={100}/>

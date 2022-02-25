@@ -49,30 +49,31 @@ export default function Signup() {
         if (response.ok) {
             // window.location.href = "/";
             alert("Successfully signed up!");
-            console.log(response.json());
         } else {
             alert("Signup failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
-            console.log(response.json());
         }
     }
 
     return (
-        <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="formUsername">
-                <Form.Label>Username</Form.Label>
-                <Form.Control type="text" placeholder="Enter username" value={username}
-                              onChange={e => setUsername(e.target.value)}/>
-            </Form.Group>
+        <>
+            <h2>Signup</h2>
+            <Form onSubmit={handleSubmit}>
+                <Form.Group controlId="formUsernameSignup">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control type="text" placeholder="Enter username" value={username}
+                                  onChange={e => setUsername(e.target.value)}/>
+                </Form.Group>
 
-            <Form.Group controlId="formPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control type="password" placeholder="Enter password" value={password}
-                              onChange={e => setPassword(e.target.value)}/>
-            </Form.Group>
+                <Form.Group controlId="formPasswordSignup">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type="password" placeholder="Enter password" value={password}
+                                  onChange={e => setPassword(e.target.value)}/>
+                </Form.Group>
 
-            <Button size="lg" type="submit" disabled={!validateForm()}>
-                Signup
-            </Button>
-        </Form>
+                <Button size="lg" type="submit" disabled={!validateForm()}>
+                    Signup
+                </Button>
+            </Form>
+        </>
     );
 }
