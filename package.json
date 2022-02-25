@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "homepage": "https://zwazel.github.io/autobattler-frontend",
   "private": true,
-  "proxy": "http://localhost:8080/api/",
+  "proxy": "http://https://zwazels-autobattler-test.herokuapp.com/api/",
   "dependencies": {
     "@inlet/react-pixi": "^6.6.5",
     "@testing-library/jest-dom": "^5.16.2",
