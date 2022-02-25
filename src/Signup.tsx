@@ -41,8 +41,8 @@ export default function Signup() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: username,
-                password: password
+                'username': username,
+                'password': password
             })
         });
 
@@ -51,7 +51,8 @@ export default function Signup() {
             alert("Successfully signed up!");
             console.log(response.json());
         } else {
-            alert("Signup failed");
+            alert("Signup failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
+            console.log(response.json());
         }
     }
 
