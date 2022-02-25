@@ -20,7 +20,7 @@ export default function Signup() {
     });
 
     useEffect(() => {
-        fetch("public/server/userLoginInfo")
+        fetch(`${process.env.FETCH_CALL_DOMAIN}/public/server/userLoginInfo`)
             .then(r => r.json())
             .then(r => {
                 setUserLoginInfo(r);
@@ -35,7 +35,7 @@ export default function Signup() {
     async function handleSubmit(event: { preventDefault: () => void; }) {
         event.preventDefault();
 
-        const response = await fetch("auth/signup", {
+        const response = await fetch(`${process.env.FETCH_CALL_DOMAIN}/auth/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

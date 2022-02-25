@@ -9,7 +9,7 @@ export default function GetServerInfos() {
     const [serverInfos, setServerInfos] = useState<ServerInfo[]>([]);
 
     useEffect(() => {
-        fetch("public/server/info")
+        fetch(`${process.env.FETCH_CALL_DOMAIN}/public/server/info`)
             .then(r => r.json())
             .then(r => {
                 setServerInfos(r);
