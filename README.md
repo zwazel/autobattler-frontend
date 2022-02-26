@@ -1,11 +1,9 @@
 # autobattler-frontend
 
-## How to update github pages
+This project needs some environment variables to be set. If you're working locally, create a ".env" file in the root
+directory with the following variables:
+If you're deploying to GitHub pages, create secrets for the following variables in your GitHub repository:
 
-### Commit message = "deploy"
-
-npm run deploy
-
-### With custom commit message
-
-npm run deploy -- -m "Deploy React app to GitHub Pages"
+- REACT_APP_FETCH_CALL_DOMAIN
+    - The domain to use for fetch calls. (e.g. "http://localhost:8080/api"). it's important that you don't have a "/" at
+      the end.
