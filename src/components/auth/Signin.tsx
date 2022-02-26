@@ -20,6 +20,7 @@ export default function SignIn() {
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
+            mode: 'cors',
             body: JSON.stringify({
                 'username': username,
                 'password': password
