@@ -17,11 +17,15 @@ export default function GetSecretUser() {
             mode: 'cors',
         })
             .then(r => {
-                console.log(r);
-                return r.json();
+                if(r.ok) {
+                    return r.json();
+                } else {
+                    return {
+                        message: "Error!!!!! you're probably not logged in!!!",
+                    }
+                }
             })
             .then(r => {
-                console.log(r);
                 setMessage(r.message);
             })
     }
