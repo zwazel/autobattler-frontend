@@ -6,6 +6,7 @@ import myFirstUnitImage from './assets/img/units/my_first_unit/goodSoupMobil.png
 import Signup from "./components/auth/Signup";
 import GetServerInfos from "./components/misc/GetServerInfos";
 import SignIn from "./components/auth/Signin";
+import GetSecretUser from "./components/auth/test/GetSecretUser";
 
 export default function App() {
     return (
@@ -26,6 +27,7 @@ export default function App() {
             </header>
             <Signup/>
             <SignIn/>
+            <GetSecretUser/>
             <GetServerInfos/>
             <Stage>
                 <Sprite image={myFirstUnitImage} x={100} y={100}/>
