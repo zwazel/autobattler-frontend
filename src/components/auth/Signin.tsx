@@ -29,7 +29,6 @@ export default function SignIn() {
 
         if (response.ok) {
             // window.location.href = "/";
-            console.log(response); // undefined
             alert("Successfully signed in!");
         } else {
             alert("Sign in failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
