@@ -11,10 +11,8 @@ export default function GetSecretUser() {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-                cookie: document.cookie,
             },
             credentials: 'include',
-            mode: 'cors',
         })
             .then(r => {
                 if(r.ok) {
