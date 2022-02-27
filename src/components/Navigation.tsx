@@ -135,7 +135,7 @@ export default function Navigation() {
                 <Route path={"/sign-up"}
                        element={user.loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
                 <Route path={"/profile"}
-                       element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
+                       element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile user={user} />}/>
             </Routes>
         </>
     )
