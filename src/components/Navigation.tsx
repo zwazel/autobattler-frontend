@@ -13,7 +13,7 @@ interface userInfos {
 }
 
 export default function Navigation() {
-    const [user, setUser] = React.useState<User>(new User(-1,"undefined",false));
+    const [user, setUser] = React.useState<User>(new User(-1, "undefined", false));
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/checkIfLoggedIn`, {
@@ -39,14 +39,11 @@ export default function Navigation() {
 
                 } else {
                     const message = JSON.parse(r.message) as userInfos;
-                    // setUser(new User(message.id, message.username, true));
+                    const newUser = new User(message.id, message.username, true);
+                    setUser(newUser);
                 }
             })
     }, []);
-
-    function isLoggedIn() {
-        return user.loggedIn;
-    }
 
     async function logout(): Promise<boolean> {
         let success: boolean = false;
@@ -86,7 +83,7 @@ export default function Navigation() {
                             Home
                         </NavLink>
                     </li>
-                    {isLoggedIn() ? (
+                    {user.loggedIn ? (
                         <>
                             <li>
                                 <NavLink to={"/profile"}
@@ -134,11 +131,11 @@ export default function Navigation() {
             <Routes>
                 <Route path={"/"} element={<Home/>}/>
                 <Route path={"/sign-in"}
-                       element={isLoggedIn() ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
+                       element={user.loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
                 <Route path={"/sign-up"}
-                       element={isLoggedIn() ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
+                       element={user.loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
                 <Route path={"/profile"}
-                       element={isLoggedIn() ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
+                       element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
             </Routes>
         </>
     )
