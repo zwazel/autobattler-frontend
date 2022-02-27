@@ -1,7 +1,7 @@
 {
   "name": "autobattler-frontend",
   "version": "0.1.0",
-  "homepage": "https://zwazel.github.io/autobattler-frontend",
+  "homepage": "https://zwazel.github.io/autobattler-frontend/",
   "private": true,
   "dependencies": {
     "@inlet/react-pixi": "^6.6.5",

@@ -41,7 +41,7 @@ export default function Navigation() {
             <nav>
                 <ul>
                     <li>
-                        <NavLink to={"/autobattler-frontend/"}
+                        <NavLink to={"/"}
                                  style={({isActive}) => isActive ? activeStyle : notActiveStyle}
                                  className={({isActive}) => isActive ? 'active' : 'inactive'}
                         >
@@ -51,7 +51,7 @@ export default function Navigation() {
                     {loggedIn ? (
                         <>
                             <li>
-                                <NavLink to={"/autobattler-frontend/profile/"}
+                                <NavLink to={"/profile"}
                                          style={({isActive}) => isActive ? activeStyle : notActiveStyle}
                                          className={isActive => isActive ? 'active' : 'inactive'}
                                 >
@@ -73,7 +73,7 @@ export default function Navigation() {
                     ) : (
                         <>
                             <li>
-                                <NavLink to={"/autobattler-frontend/sign-in/"}
+                                <NavLink to={"/sign-in"}
                                          style={({isActive}) => isActive ? activeStyle : notActiveStyle}
                                          className={isActive => isActive ? 'active' : 'inactive'}
                                 >
@@ -81,7 +81,7 @@ export default function Navigation() {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to={"/autobattler-frontend/sign-up/"}
+                                <NavLink to={"/sign-up"}
                                          style={({isActive}) => isActive ? activeStyle : notActiveStyle}
                                          className={isActive => isActive ? 'active' : 'inactive'}
                                 >
@@ -94,15 +94,13 @@ export default function Navigation() {
             </nav>
 
             <Routes>
-                <Route path={"/autobattler-frontend/*"}>
-                    <Route path={""} element={<Home/>}/>
-                    <Route path={"sign-in/"}
-                           element={loggedIn ? <Navigate to={"../profile/"} replace={true}/> : <Login/>}/>
-                    <Route path={"sign-up/"}
-                           element={loggedIn ? <Navigate to={"../profile/"} replace={true}/> : <Signup/>}/>
-                    <Route path={"profile/"}
-                           element={!loggedIn ? <Navigate to={"../sign-in/"} replace={true}/> : <Profile/>}/>
-                </Route>
+                <Route path={"/"} element={<Home/>}/>
+                <Route path={"/sign-in"}
+                       element={loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
+                <Route path={"/sign-up"}
+                       element={loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
+                <Route path={"/profile"}
+                       element={!loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
             </Routes>
         </>
     )

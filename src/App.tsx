@@ -3,12 +3,12 @@ import './App.css';
 import {Sprite, Stage} from '@inlet/react-pixi'
 import myFirstUnitImage from './assets/img/units/my_first_unit/goodSoupMobil.png'
 import GetServerInfos from "./components/misc/GetServerInfos";
-import {BrowserRouter} from "react-router-dom";
+import {HashRouter} from "react-router-dom";
 import Navigation from "./components/Navigation";
 
 export default function App() {
     return (
-        <BrowserRouter>
+        <HashRouter>
             <div className="App">
                 <header className="App-header">
                     <Navigation/>
@@ -18,6 +18,6 @@ export default function App() {
                     <Sprite image={myFirstUnitImage} x={100} y={100}/>
                 </Stage>
             </div>
-        </BrowserRouter>
+        </HashRouter>
     );
 }
