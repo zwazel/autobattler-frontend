@@ -38,8 +38,11 @@ export default function Signup() {
         const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/signup`, {
             method: "POST",
             headers: {
+                Accept: 'application/json',
                 "Content-Type": "application/json"
             },
+            credentials: 'include',
+            mode: 'cors',
             body: JSON.stringify({
                 'username': username,
                 'password': password
@@ -47,7 +50,7 @@ export default function Signup() {
         });
 
         if (response.ok) {
-            window.location.href = "../sign-in";
+            window.location.reload();
         } else {
             alert("Signup failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
         }
