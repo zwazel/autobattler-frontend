@@ -47,8 +47,7 @@ export default function Signup() {
         });
 
         if (response.ok) {
-            // window.location.href = "/";
-            alert("Successfully signed up!");
+            window.location.href = "/sign-in";
         } else {
             alert("Signup failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
         }

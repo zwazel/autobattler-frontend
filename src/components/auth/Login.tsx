@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import Form from "react-bootstrap/Form";
 import {Button} from "react-bootstrap";
 
-export default function SignIn() {
+export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
