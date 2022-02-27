@@ -1,7 +1,13 @@
 import {useEffect, useState} from "react";
+import User from "../classes/User";
+
+interface userInfos {
+    username: string,
+    id: number,
+}
 
 export default function CheckIfLoggedIn() {
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [loggedInUser, setLoggedInUser] = useState<User>();
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/checkIfLoggedIn`, {
@@ -13,13 +19,22 @@ export default function CheckIfLoggedIn() {
             credentials: 'include',
         })
             .then(r => {
-                if (r.status === 200) {
-                    setLoggedIn(true);
+                if (r.ok) {
+                    return r.json();
                 } else if (r.status === 201) {
-                    setLoggedIn(false);
+
+                }
+            })
+            .then(r => {
+                const message = r.message as userInfos;
+                if (message) {
+                    console.log(message);
+                    setLoggedInUser(new User(message.id, message.username));
                 }
             })
     }, []);
 
-    return loggedIn as boolean;
+    console.log("loggedInUser", loggedInUser);
+
+    return true;
 }
