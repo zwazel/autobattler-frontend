@@ -28,7 +28,7 @@ export default function Login() {
         });
 
         if (response.ok) {
-            window.location.href = "/profile";
+            window.location.reload();
         } else {
             alert("Sign in failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
         }
