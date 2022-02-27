@@ -4,7 +4,7 @@ export default function CheckIfLoggedIn() {
     const [loggedIn, setLoggedIn] = useState(false);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/test/user`, {
+        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/checkIfLoggedIn`, {
             method: "GET",
             headers: {
                 Accept: 'application/json',
@@ -13,9 +13,9 @@ export default function CheckIfLoggedIn() {
             credentials: 'include',
         })
             .then(r => {
-                if (r.ok) {
+                if (r.status === 200) {
                     setLoggedIn(true);
-                } else {
+                } else if (r.status === 201) {
                     setLoggedIn(false);
                 }
             })
