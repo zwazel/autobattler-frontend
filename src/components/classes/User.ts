@@ -1,11 +1,12 @@
 export default class User {
     private _id: number;
     private _username: string;
+    private _loggedIn: boolean;
 
-    constructor(id: number, username: string) {
+    constructor(id: number, username: string, loggedIn: boolean) {
         this._id = id;
         this._username = username;
-        console.log(`User ${username} created!`);
+        this._loggedIn = loggedIn;
     }
 
     get id(): number {
@@ -22,5 +23,13 @@ export default class User {
 
     set username(value: string) {
         this._username = value;
+    }
+
+    get loggedIn(): boolean {
+        return this._loggedIn;
+    }
+
+    set loggedIn(value: boolean) {
+        this._loggedIn = value;
     }
 }

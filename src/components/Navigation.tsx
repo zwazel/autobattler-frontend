@@ -3,12 +3,50 @@ import Home from "./Home";
 import Login from "./auth/Login";
 import Signup from "./auth/Signup";
 import Profile from "./Profile";
-import CheckIfLoggedIn from "./misc/CheckIfLoggedIn";
 import {Button} from "react-bootstrap";
+import User from "./classes/User";
+import React, {useEffect} from "react";
 
+interface userInfos {
+    username: string,
+    id: number,
+}
 
 export default function Navigation() {
-    const loggedIn = CheckIfLoggedIn();
+    const [user, setUser] = React.useState<User>(new User(-1,"undefined",false));
+
+    useEffect(() => {
+        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/checkIfLoggedIn`, {
+            method: "GET",
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        })
+            .then(r => {
+                if (r.status === 200) {
+                    return r.json();
+                } else if (r.status === 201) {
+                    return {
+                        username: "undefined",
+                        id: -1,
+                    } as userInfos;
+                }
+            })
+            .then(r => {
+                if (r.username === "undefined" && r.id === -1) {
+
+                } else {
+                    const message = JSON.parse(r.message) as userInfos;
+                    // setUser(new User(message.id, message.username, true));
+                }
+            })
+    }, []);
+
+    function isLoggedIn() {
+        return user.loggedIn;
+    }
 
     async function logout(): Promise<boolean> {
         let success: boolean = false;
@@ -48,7 +86,7 @@ export default function Navigation() {
                             Home
                         </NavLink>
                     </li>
-                    {loggedIn ? (
+                    {isLoggedIn() ? (
                         <>
                             <li>
                                 <NavLink to={"/profile"}
@@ -96,11 +134,11 @@ export default function Navigation() {
             <Routes>
                 <Route path={"/"} element={<Home/>}/>
                 <Route path={"/sign-in"}
-                       element={loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
+                       element={isLoggedIn() ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
                 <Route path={"/sign-up"}
-                       element={loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
+                       element={isLoggedIn() ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
                 <Route path={"/profile"}
-                       element={!loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
+                       element={isLoggedIn() ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
             </Routes>
         </>
     )
