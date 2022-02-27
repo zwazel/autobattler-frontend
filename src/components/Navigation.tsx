@@ -1,13 +1,13 @@
-import {NavLink, Route, Routes} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {NavLink, Route, Routes, Navigate} from "react-router-dom";
 import Home from "./Home";
 import Login from "./auth/Login";
 import Signup from "./auth/Signup";
 import Profile from "./Profile";
+import CheckIfLoggedIn from "./misc/CheckIfLoggedIn";
 
 
 export default function Navigation() {
-    const [loggedIn, setLoggedIn] = useState(false);
+    const loggedIn = CheckIfLoggedIn();
 
     const activeStyle = {
         color: '#fa923f',
@@ -18,27 +18,6 @@ export default function Navigation() {
         color: '#ffffff',
         textDecoration: 'none',
     }
-
-    useEffect(() => {
-        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/test/user`, {
-            method: "GET",
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        })
-            .then(r => {
-                console.log(r);
-                if (r.ok) {
-                    setLoggedIn(true);
-                } else {
-                    setLoggedIn(false);
-                }
-            })
-    }, []);
-
-    console.log("loggedIn", loggedIn);
 
     return (
         <>
@@ -86,9 +65,9 @@ export default function Navigation() {
 
             <Routes>
                 <Route path={"/autobattler-frontend"} element={<Home/>}/>
-                <Route path={"/sign-in"} element={<Login/>}/>
-                <Route path={"/sign-up"} element={<Signup/>}/>
-                <Route path={"/profile"} element={<Profile/>}/>
+                <Route path={"/sign-in"} element={loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
+                <Route path={"/sign-up"} element={loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
+                <Route path={"/profile"} element={!loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile/>}/>
             </Routes>
         </>
     )

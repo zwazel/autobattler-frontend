@@ -28,8 +28,7 @@ export default function Login() {
         });
 
         if (response.ok) {
-            // window.location.href = "/";
-            alert("Successfully signed in!");
+            window.location.href = "/profile";
         } else {
             alert("Sign in failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
         }

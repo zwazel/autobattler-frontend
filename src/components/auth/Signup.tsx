@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import {Button} from "react-bootstrap";
+import CheckIfLoggedIn from "../misc/CheckIfLoggedIn";
 
 interface userLoginInfos {
     usernameMinLength: number;
@@ -20,11 +21,11 @@ export default function Signup() {
     });
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/public/server/userLoginInfo`)
-            .then(r => r.json())
-            .then(r => {
-                setUserLoginInfo(r);
-            })
+            fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/public/server/userLoginInfo`)
+                .then(r => r.json())
+                .then(r => {
+                    setUserLoginInfo(r);
+                })
     }, []);
 
     function validateForm() {
