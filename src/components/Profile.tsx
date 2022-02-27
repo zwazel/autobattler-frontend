@@ -8,7 +8,7 @@ export default function Profile(props: { user: User }) {
         <div>
             <h1>Welcome, {user.username}</h1>
             <p>
-                You're id: {user.id}
+                Your id: {user.id}
             </p>
         </div>
     );
