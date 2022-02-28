@@ -6,6 +6,8 @@ import Profile from "./Profile";
 import {Button} from "react-bootstrap";
 import User from "./classes/User";
 import React, {useEffect} from "react";
+import Formations from "./Formations";
+import ProfileHeader from "./ProfileHeader";
 
 interface userInfos {
     username: string,
@@ -15,6 +17,7 @@ interface userInfos {
 export default function Navigation() {
     const [user, setUser] = React.useState<User>(new User(-1, "undefined", false));
 
+    // checks if the user is logged in
     useEffect(() => {
         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/checkIfLoggedIn`, {
             method: "GET",
@@ -86,11 +89,19 @@ export default function Navigation() {
                     {user.loggedIn ? (
                         <>
                             <li>
-                                <NavLink to={"/profile"}
+                                <NavLink to={"/profile/"}
                                          style={({isActive}) => isActive ? activeStyle : notActiveStyle}
                                          className={isActive => isActive ? 'active' : 'inactive'}
                                 >
                                     Profile
+                                </NavLink>
+                            </li>
+                            <li>
+                                <NavLink to={"/profile/formations"}
+                                         style={({isActive}) => isActive ? activeStyle : notActiveStyle}
+                                         className={isActive => isActive ? 'active' : 'inactive'}
+                                >
+                                    Formations
                                 </NavLink>
                             </li>
                             <li>
@@ -131,11 +142,14 @@ export default function Navigation() {
             <Routes>
                 <Route path={"/"} element={<Home/>}/>
                 <Route path={"/sign-in"}
-                       element={user.loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Login/>}/>
+                       element={user.loggedIn ? <Navigate to={"/profile/"} replace={true}/> : <Login/>}/>
                 <Route path={"/sign-up"}
-                       element={user.loggedIn ? <Navigate to={"/profile"} replace={true}/> : <Signup/>}/>
-                <Route path={"/profile"}
-                       element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> : <Profile user={user} />}/>
+                       element={user.loggedIn ? <Navigate to={"/profile/"} replace={true}/> : <Signup/>}/>
+                <Route path={"/profile/*"} element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> :
+                    <ProfileHeader user={user}/>}>
+                    <Route path={""} element={<Profile user={user}/>}/>
+                    <Route path={"formations/"} element={<Formations/>}/>
+                </Route>
             </Routes>
         </>
     )
