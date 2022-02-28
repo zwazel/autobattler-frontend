@@ -97,7 +97,7 @@ export default function Navigation() {
                                 </NavLink>
                             </li>
                             <li>
-                                <NavLink to={"/profile/formations"}
+                                <NavLink to={"/profile/formations/"}
                                          style={({isActive}) => isActive ? activeStyle : notActiveStyle}
                                          className={isActive => isActive ? 'active' : 'inactive'}
                                 >
