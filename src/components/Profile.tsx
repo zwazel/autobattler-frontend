@@ -28,7 +28,6 @@ export default function Profile(props: { user: User }) {
         }).then(r => {
             return r.json()
         }).then(r => {
-            console.log("response", r);
             let units: Unit[] = [];
             for (let unit of r) {
                 units.push({
@@ -43,15 +42,13 @@ export default function Profile(props: { user: User }) {
         });
     }, []);
 
-    console.log("units", units);
-
     return (
         <div>
             <h1>Welcome, {user.username}</h1>
             <p>
                 Your id: {user.id}
             </p>
-            {/*display the units*/}
+
             <h2>Your units</h2>
             <table>
                 <thead>
@@ -65,7 +62,32 @@ export default function Profile(props: { user: User }) {
                 {units.units.map(unit => {
                     return (
                         <tr key={unit.id}>
-                            <td>{unit.name}</td>
+                            <td>{unit.customNamesAllowed ?
+                                <div>
+                                    <input type="text" defaultValue={unit.name}
+                                           onChange={e => unit.name = e.target.value}/>
+                                    <button onClick={async function () {
+                                        const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/updateUnit`, {
+                                            method: "POST",
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                            },
+                                            credentials: 'include',
+                                            body: JSON.stringify({
+                                                id: unit.id,
+                                                name: unit.name,
+                                                level: unit.level,
+                                            })
+                                        });
+                                        console.log("response", response);
+                                    }}>
+                                        Update
+                                    </button>
+                                </div>
+                                :
+                                unit.name}
+                            </td>
                             <td>{unit.unitType}</td>
                             <td>{unit.level}</td>
                         </tr>
