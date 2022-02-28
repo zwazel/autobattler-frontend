@@ -1,12 +1,26 @@
-import React from "react";
+import React, {useEffect} from "react";
 import "../assets/css/loading.css";
 
 export default function Loader() {
+    const [count, setCount] = React.useState(0);
+    const waitTime = 5; // seconds to wait before showing the extra text
+    const timer = () => setCount(count + 1);
+
+    useEffect(
+        () => {
+            if (count <= 0) {
+                return;
+            }
+            const id = setInterval(timer, 1000);
+            return () => clearInterval(id);
+        },
+        [count]
+    );
+
     return (
         <div className="loader">
             <h1>Loading...</h1>
-            {/*todo: show this text only after a certain amount of time!!!!*/}
-            <p>If it's taking long, it's probably Heroku waking up...</p>
+            {count > waitTime && <h2>If it's taking long, it's probably Heroku waking up...</h2>}
         </div>
     );
 }
