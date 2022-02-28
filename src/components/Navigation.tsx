@@ -8,6 +8,7 @@ import User from "./classes/User";
 import React, {useEffect, useState} from "react";
 import Formations from "./Formations";
 import ProfileHeader from "./ProfileHeader";
+import Loader from "./Loader";
 
 interface userInfos {
     username: string,
@@ -53,9 +54,7 @@ export default function Navigation() {
     return (
         <div>
             {loading ?
-                <div>
-                    <h1>Loading...</h1>
-                </div>
+                <Loader/>
                 :
                 <NavigationCaller user={user}/>
             }
@@ -63,7 +62,7 @@ export default function Navigation() {
     );
 }
 
-export function NavigationCaller(props: { user: User }) {
+function NavigationCaller(props: { user: User }) {
     const [user] = useState(props.user);
 
     async function logout(): Promise<boolean> {
