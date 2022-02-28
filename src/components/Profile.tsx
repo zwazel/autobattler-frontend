@@ -54,8 +54,8 @@ export default function Profile(props: { user: User }) {
                 <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Type</th>
                     <th>Level</th>
+                    <th>Type</th>
                     <th>Update</th>
                 </tr>
                 </thead>
