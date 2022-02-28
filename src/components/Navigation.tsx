@@ -5,7 +5,7 @@ import Signup from "./auth/Signup";
 import Profile from "./Profile";
 import {Button} from "react-bootstrap";
 import User from "./classes/User";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Formations from "./Formations";
 import ProfileHeader from "./ProfileHeader";
 
@@ -16,6 +16,8 @@ interface userInfos {
 
 export default function Navigation() {
     const [user, setUser] = React.useState<User>(new User(-1, "undefined", false));
+
+    const [loading, setLoading] = useState(true);
 
     // checks if the user is logged in
     useEffect(() => {
@@ -39,14 +41,30 @@ export default function Navigation() {
             })
             .then(r => {
                 if (r.username === "undefined" && r.id === -1) {
-
                 } else {
                     const message = JSON.parse(r.message) as userInfos;
                     const newUser = new User(message.id, message.username, true);
                     setUser(newUser);
                 }
+                setLoading(false);
             })
     }, []);
+
+    return (
+        <div>
+            {loading ?
+                <div>
+                    <h1>Loading...</h1>
+                </div>
+                :
+                <NavigationCaller user={user}/>
+            }
+        </div>
+    );
+}
+
+export function NavigationCaller(props: { user: User }) {
+    const [user] = useState(props.user);
 
     async function logout(): Promise<boolean> {
         let success: boolean = false;
