@@ -9,6 +9,7 @@ import React, {useEffect, useState} from "react";
 import Formations from "./Formations";
 import ProfileHeader from "./ProfileHeader";
 import Loader from "./Loader";
+import NotFound from "./NotFound";
 
 interface userInfos {
     username: string,
@@ -93,7 +94,7 @@ function NavigationCaller(props: { user: User }) {
 
     return (
         <>
-            <nav>
+            <nav className={"App-header"}>
                 <ul>
                     <li>
                         <NavLink to={"/"}
@@ -167,6 +168,7 @@ function NavigationCaller(props: { user: User }) {
                     <Route path={""} element={<Profile user={user}/>}/>
                     <Route path={"formations/"} element={<Formations/>}/>
                 </Route>
+                <Route path={"*"} element={<NotFound/>}/>
             </Routes>
         </>
     )

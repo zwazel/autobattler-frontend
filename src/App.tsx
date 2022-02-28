@@ -10,9 +10,7 @@ export default function App() {
     return (
         <HashRouter>
             <div className="App">
-                <header className="App-header">
-                    <Navigation/>
-                </header>
+                <Navigation/>
                 <GetServerInfos/>
                 <Stage>
                     <Sprite image={myFirstUnitImage} x={100} y={100}/>
