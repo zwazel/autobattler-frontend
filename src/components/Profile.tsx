@@ -52,11 +52,6 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
             setUnits({units: units});
             setLoaded(true);
         });
-
-        if(unitTypes.length > 0) {
-            setNewUnitType(unitTypes[0]);
-            return;
-        }
     }, []);
 
     return (

@@ -51,6 +51,7 @@ export default function Navigation() {
             })
             .then(r => {
                 if (r.username === "undefined" && r.id === -1) {
+                    setLoading(false);
                 } else {
                     const message = JSON.parse(r.message) as userInfos;
                     const newUser = new User(message.id, message.username, true);
@@ -67,6 +68,8 @@ export default function Navigation() {
                         .then(r => {
                             if (r.ok) {
                                 return r.json();
+                            } else {
+                                throw new Error("Error while fetching unit types");
                             }
                         })
                         .then(r => {
@@ -74,9 +77,9 @@ export default function Navigation() {
                             } else {
                                 setUnitTypes(r);
                             }
+                            setLoading(false);
                         })
                 }
-                setLoading(false);
             })
     }, []);
 
