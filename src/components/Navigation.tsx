@@ -168,6 +168,7 @@ function NavigationCaller(props: { user: User }) {
                     <Route path={""} element={<Profile user={user}/>}/>
                     <Route path={"formations/"} element={<Formations/>}/>
                 </Route>
+                <Route path={"/loader"} element={<Loader/>}/>
                 <Route path={"*"} element={<NotFound/>}/>
             </Routes>
         </>
