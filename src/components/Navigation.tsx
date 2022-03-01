@@ -15,6 +15,7 @@ import GetServerInfos from "./misc/GetServerInfos";
 interface userInfos {
     username: string,
     id: number,
+    canCreateNewUnits: boolean,
 }
 
 export interface UnitType {
@@ -24,7 +25,7 @@ export interface UnitType {
 }
 
 export default function Navigation() {
-    const [user, setUser] = React.useState<User>(new User(-1, "undefined", false));
+    const [user, setUser] = React.useState<User>(new User(-1, "undefined", false, false));
 
     const [loading, setLoading] = useState(true);
 
@@ -47,6 +48,8 @@ export default function Navigation() {
                     return {
                         username: "undefined",
                         id: -1,
+                        canCreateNewUnits: false,
+                        loggedIn: false,
                     } as userInfos;
                 }
             })
@@ -55,7 +58,7 @@ export default function Navigation() {
                     setLoading(false);
                 } else {
                     const message = JSON.parse(r.message) as userInfos;
-                    const newUser = new User(message.id, message.username, true);
+                    const newUser = new User(message.id, message.username, true, message.canCreateNewUnits);
                     setUser(newUser);
 
                     fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getUnitTypes`, {

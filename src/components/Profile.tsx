@@ -66,6 +66,9 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
             <p>
                 Your id: {user.id}
             </p>
+            <p>
+                You can create more units: {user.canCreateNewUnits ? "Yes" : "No"}
+            </p>
 
             <h2>Your units</h2>
             {loaded ?
@@ -117,67 +120,71 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                 </tr>
                             )
                         })}
-                        <tr>
-                            <td>
-                                {newUnitType.customNamesAllowed ?
-                                    <input type="text" value={newUnitName}
-                                           onChange={e => setNewUnitName(e.target.value)}/>
-                                    :
-                                    newUnitType.defaultName
-                                }
-                            </td>
-                            <td>
-                                <input min={1} type="number" value={newUnitLevel}
-                                       onChange={e => setNewUnitLevel(+e.target.value)}/>
-                            </td>
-                            <td>
-                                <select onChange={e => setNewUnitType(unitTypes[+e.target.value])}>
-                                    {unitTypes.map(type => {
-                                        return <option key={type.name}
-                                                       value={unitTypes.indexOf(type)}>{type.name}</option>
-                                    })}
-                                </select>
-                            </td>
-                            <td>
-                                <button onClick={async function () {
-                                    const data = {
-                                        name: newUnitName,
-                                        level: newUnitLevel,
-                                        unitType: newUnitType.name,
-                                    };
-
-                                    const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addUnit`, {
-                                        method: "POST",
-                                        headers: {
-                                            Accept: 'application/json',
-                                            'Content-Type': 'application/json',
-                                        },
-                                        credentials: 'include',
-                                        body: JSON.stringify(data)
-                                    });
-
-                                    if (response.ok) {
-                                        const unit = await response.json() as UnitInterface;
-                                        const newUnit = {
-                                            id: unit.id,
-                                            name: unit.name,
-                                            level: unit.level,
-                                            unitType: unit.unitType,
-                                            customNamesAllowed: unit.customNamesAllowed,
-                                        } as UnitInterface;
-                                        // add newUnit to units
-                                        let myUnits = units.units;
-                                        myUnits.push(newUnit);
-                                        setUnits({units: myUnits});
-                                        setNewUnitName(newUnitType.defaultName);
-                                        setNewUnitLevel(1);
-                                        scrollToBottom();
+                        {user.canCreateNewUnits ?
+                            <tr>
+                                <td>
+                                    {newUnitType.customNamesAllowed ?
+                                        <input type="text" value={newUnitName}
+                                               onChange={e => setNewUnitName(e.target.value)}/>
+                                        :
+                                        newUnitType.defaultName
                                     }
-                                }}>
-                                    Add
-                                </button>
-                            </td>
-                        </tr>
+                                </td>
+                                <td>
+                                    <input min={1} type="number" value={newUnitLevel}
+                                           onChange={e => setNewUnitLevel(+e.target.value)}/>
+                                </td>
+                                <td>
+                                    <select onChange={e => setNewUnitType(unitTypes[+e.target.value])}>
+                                        {unitTypes.map(type => {
+                                            return <option key={type.name}
+                                                           value={unitTypes.indexOf(type)}>{type.name}</option>
+                                        })}
+                                    </select>
+                                </td>
+                                <td>
+                                    <button onClick={async function () {
+                                        const data = {
+                                            name: newUnitName,
+                                            level: newUnitLevel,
+                                            unitType: newUnitType.name,
+                                        };
+
+                                        const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addUnit`, {
+                                            method: "POST",
+                                            headers: {
+                                                Accept: 'application/json',
+                                                'Content-Type': 'application/json',
+                                            },
+                                            credentials: 'include',
+                                            body: JSON.stringify(data)
+                                        });
+
+                                        if (response.ok) {
+                                            const unit = await response.json() as UnitInterface;
+                                            const newUnit = {
+                                                id: unit.id,
+                                                name: unit.name,
+                                                level: unit.level,
+                                                unitType: unit.unitType,
+                                                customNamesAllowed: unit.customNamesAllowed,
+                                            } as UnitInterface;
+                                            // add newUnit to units
+                                            let myUnits = units.units;
+                                            myUnits.push(newUnit);
+                                            setUnits({units: myUnits});
+                                            setNewUnitName(newUnitType.defaultName);
+                                            setNewUnitLevel(1);
+                                            scrollToBottom();
+                                        }
+                                    }}>
+                                        Add
+                                    </button>
+                                </td>
+                            </tr>
+                            :
+                            <></>
+                        }
                         </tbody>
                     </table>
                     <div ref={(el) => {
