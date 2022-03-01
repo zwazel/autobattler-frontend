@@ -163,6 +163,8 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                         let myUnits = units.units;
                                         myUnits.push(newUnit);
                                         setUnits({units: myUnits});
+                                        setNewUnitName(newUnitType.defaultName);
+                                        setNewUnitLevel(1);
                                     }
                                 }}>
                                     Add
