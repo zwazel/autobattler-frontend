@@ -1,19 +1,18 @@
-import {useEffect, useState} from "react";
-import Unit from "./classes/units/Unit";
+import {useEffect} from "react";
 import {UnitType} from "./Navigation";
 
-interface Formation {
-    id: number;
-    units: UnitFormation[];
-}
-
-interface UnitFormation {
-    unit: Unit;
-}
+// interface Formation {
+//     id: number;
+//     units: UnitFormation[];
+// }
+//
+// interface UnitFormation {
+//     unit: Unit;
+// }
 
 export default function Formations(props: { unitTypes: UnitType[] }) {
-    const unitTypes = props.unitTypes;
-    const [formations, setFormations] = useState<Formation[]>([]);
+    // const unitTypes = props.unitTypes;
+    // const [formations, setFormations] = useState<Formation[]>([]);
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
@@ -32,7 +31,8 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
 
     // display all the formations
     return (
-        <h1>Formations</h1>
-
+        <>
+            <h1>Formations</h1>
+        </>
     )
 }
