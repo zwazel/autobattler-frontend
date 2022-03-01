@@ -28,7 +28,8 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
     });
     const [newUnitLevel, setNewUnitLevel] = useState(1);
 
-    let [messagesEnd, setMessagesEnd] = useState<HTMLDivElement | null>(null);
+    const [messagesEnd, setMessagesEnd] = useState<HTMLDivElement | null>(null);
+    const [amountUnits, setAmountUnits] = useState(user.amountUnits);
 
     const scrollToBottom = () => {
         messagesEnd?.scrollIntoView({behavior: "smooth"});
@@ -67,7 +68,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                 Your id: {user.id}
             </p>
             <p>
-                You can create more units: {(user.amountUnits >= user.maxAmountUnits) ? "Yes" : "No"}
+                You can create more units: {(amountUnits < user.maxAmountUnits) ? "Yes" : "No"}
             </p>
 
             <h2>Your units</h2>
@@ -120,7 +121,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                 </tr>
                             )
                         })}
-                        {(user.amountUnits >= user.maxAmountUnits) ?
+                        {(amountUnits < user.maxAmountUnits) ?
                             <tr>
                                 <td>
                                     {newUnitType.customNamesAllowed ?
@@ -175,7 +176,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                             setUnits({units: myUnits});
                                             setNewUnitName(newUnitType.defaultName);
                                             setNewUnitLevel(1);
-                                            user.amountUnits++;
+                                            setAmountUnits(amountUnits + 1);
                                             scrollToBottom();
                                         }
                                     }}>
