@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/autobattler-frontend/static/css/main.c35302bb.css",
-    "main.js": "/autobattler-frontend/static/js/main.adc32f30.js",
+    "main.js": "/autobattler-frontend/static/js/main.96142e46.js",
     "static/js/787.85d921a4.chunk.js": "/autobattler-frontend/static/js/787.85d921a4.chunk.js",
     "index.html": "/autobattler-frontend/index.html",
     "main.c35302bb.css.map": "/autobattler-frontend/static/css/main.c35302bb.css.map",
-    "main.adc32f30.js.map": "/autobattler-frontend/static/js/main.adc32f30.js.map",
+    "main.96142e46.js.map": "/autobattler-frontend/static/js/main.96142e46.js.map",
     "787.85d921a4.chunk.js.map": "/autobattler-frontend/static/js/787.85d921a4.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.c35302bb.css",
-    "static/js/main.adc32f30.js"
+    "static/js/main.96142e46.js"
   ]
 }
