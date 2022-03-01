@@ -28,6 +28,12 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
     });
     const [newUnitLevel, setNewUnitLevel] = useState(1);
 
+    let [messagesEnd, setMessagesEnd] = useState<HTMLDivElement | null>(null);
+
+    const scrollToBottom = () => {
+        messagesEnd?.scrollIntoView({behavior: "smooth"});
+    }
+
     useEffect(() => {
         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllUnits`, {
             method: "GET",
@@ -165,6 +171,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                         setUnits({units: myUnits});
                                         setNewUnitName(newUnitType.defaultName);
                                         setNewUnitLevel(1);
+                                        scrollToBottom();
                                     }
                                 }}>
                                     Add
@@ -173,6 +180,10 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                         </tr>
                         </tbody>
                     </table>
+                    <div ref={(el) => {
+                        setMessagesEnd(el);
+                    }}>
+                    </div>
                 </>
                 :
                 <Loader/>
