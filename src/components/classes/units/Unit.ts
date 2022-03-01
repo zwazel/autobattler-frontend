@@ -1,4 +1,5 @@
 import UnitTypes from "../UnitTypes";
+import Position from "../utils/Position";
 
 export default class Unit {
     private _id: number;
@@ -6,14 +7,11 @@ export default class Unit {
     private _type: UnitTypes;
     private _name: string;
     private _level: number;
-    private _position: {
-        x: number;
-        y: number;
-    };
+    private _position: Position;
     private _health: number;
     private _image: string;
 
-    constructor(id: number, side: string, type: UnitTypes, name: string, level: number, position: { x: number; y: number }, image: string, scaleAttributes: Function) {
+    constructor(id: number, side: string, type: UnitTypes, name: string, level: number, position: Position, image: string, scaleAttributes: Function) {
         this._id = id;
         this._side = side;
         this._type = type;
@@ -64,11 +62,11 @@ export default class Unit {
         this._level = value;
     }
 
-    get position(): { x: number; y: number } {
+    get position(): Position {
         return this._position;
     }
 
-    set position(value: { x: number; y: number }) {
+    set position(value: Position) {
         this._position = value;
     }
 
