@@ -16,10 +16,18 @@ interface userInfos {
     id: number,
 }
 
+export interface UnitType {
+    name: string;
+    defaultName: string;
+    customNamesAllowed: boolean;
+}
+
 export default function Navigation() {
     const [user, setUser] = React.useState<User>(new User(-1, "undefined", false));
 
     const [loading, setLoading] = useState(true);
+
+    const [unitTypes, setUnitTypes] = useState<UnitType[]>([]);
 
     // checks if the user is logged in
     useEffect(() => {
@@ -47,6 +55,26 @@ export default function Navigation() {
                     const message = JSON.parse(r.message) as userInfos;
                     const newUser = new User(message.id, message.username, true);
                     setUser(newUser);
+
+                    fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getUnitTypes`, {
+                        method: "GET",
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'include',
+                    })
+                        .then(r => {
+                            if (r.ok) {
+                                return r.json();
+                            }
+                        })
+                        .then(r => {
+                            if (r.length === 0) {
+                            } else {
+                                setUnitTypes(r);
+                            }
+                        })
                 }
                 setLoading(false);
             })
@@ -57,14 +85,15 @@ export default function Navigation() {
             {loading ?
                 <Loader/>
                 :
-                <NavigationCaller user={user}/>
+                <NavigationCaller user={user} unitTypes={unitTypes}/>
             }
         </div>
     );
 }
 
-function NavigationCaller(props: { user: User }) {
-    const [user] = useState(props.user);
+function NavigationCaller(props: { user: User, unitTypes: UnitType[] }) {
+    const user = props.user;
+    const unitTypes = props.unitTypes;
 
     async function logout(): Promise<boolean> {
         let success: boolean = false;
@@ -156,7 +185,6 @@ function NavigationCaller(props: { user: User }) {
                     )}
                 </ul>
             </nav>
-
             <Routes>
                 <Route path={"/"} element={<Home/>}/>
                 <Route path={"/sign-in"}
@@ -165,8 +193,8 @@ function NavigationCaller(props: { user: User }) {
                        element={user.loggedIn ? <Navigate to={"/profile/"} replace={true}/> : <Signup/>}/>
                 <Route path={"/profile/*"} element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> :
                     <ProfileHeader user={user}/>}>
-                    <Route path={""} element={<Profile user={user}/>}/>
-                    <Route path={"formations/"} element={<Formations/>}/>
+                    <Route path={""} element={<Profile user={user} unitTypes={unitTypes}/>}/>
+                    <Route path={"formations/"} element={<Formations unitTypes={unitTypes}/>}/>
                 </Route>
                 <Route path={"/loader"} element={<Loader/>}/>
                 <Route path={"*"} element={<NotFound/>}/>
