@@ -25,7 +25,9 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
+                for (let json of data) {
+                    console.log(JSON.parse(json.formationJson));
+                }
             })
     }, []);
 
