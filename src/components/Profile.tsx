@@ -4,10 +4,10 @@ import Loader from "./Loader";
 import {UnitType} from "./Navigation";
 
 interface Units {
-    units: Unit[];
+    units: UnitInterface[];
 }
 
-interface Unit {
+interface UnitInterface {
     id: number;
     name: string;
     level: number;
@@ -39,7 +39,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
         }).then(r => {
             return r.json()
         }).then(r => {
-            let units: Unit[] = [];
+            let units: UnitInterface[] = [];
             for (let unit of r) {
                 units.push({
                     id: unit.id,
@@ -140,8 +140,6 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                         unitType: newUnitType.name,
                                     };
 
-                                    console.log("data", data);
-
                                     const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addUnit`, {
                                         method: "POST",
                                         headers: {
@@ -151,7 +149,21 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                         credentials: 'include',
                                         body: JSON.stringify(data)
                                     });
-                                    console.log("response", response);
+
+                                    if (response.ok) {
+                                        const unit = await response.json() as UnitInterface;
+                                        const newUnit = {
+                                            id: unit.id,
+                                            name: unit.name,
+                                            level: unit.level,
+                                            unitType: unit.unitType,
+                                            customNamesAllowed: unit.customNamesAllowed,
+                                        } as UnitInterface;
+                                        // add newUnit to units
+                                        let myUnits = units.units;
+                                        myUnits.push(newUnit);
+                                        setUnits({units: myUnits});
+                                    }
                                 }}>
                                     Add
                                 </button>
