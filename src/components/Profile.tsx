@@ -100,7 +100,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                     <td>{unit.unitType}</td>
                                     <td>
                                         <button onClick={async function () {
-                                            const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/updateUnit`, {
+                                            await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/updateUnit`, {
                                                 method: "POST",
                                                 headers: {
                                                     Accept: 'application/json',
