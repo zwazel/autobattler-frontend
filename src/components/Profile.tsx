@@ -113,7 +113,6 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                                     level: unit.level,
                                                 })
                                             });
-                                            console.log("response", response);
                                         }}>
                                             Update
                                         </button>

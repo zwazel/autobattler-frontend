@@ -104,8 +104,6 @@ function NavigationCaller(props: { user: User, unitTypes: UnitType[] }) {
     const user = props.user;
     const unitTypes = props.unitTypes;
 
-    console.log(user);
-
     async function logout(): Promise<boolean> {
         let success: boolean = false;
         await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/signout`, {
