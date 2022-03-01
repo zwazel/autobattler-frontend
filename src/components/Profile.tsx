@@ -20,7 +20,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
     const unitTypes = props.unitTypes;
     const [units, setUnits] = useState<Units>({units: []});
     const [loaded, setLoaded] = useState(false);
-    const [newUnitName, setNewUnitName] = useState("");
+    const [newUnitName, setNewUnitName] = useState((unitTypes.length > 0) ? unitTypes[0].name : "");
     const [newUnitType, setNewUnitType] = useState<UnitType>((unitTypes.length > 0) ? unitTypes[0] : {
         name: "undefined",
         defaultName: "undefined",
@@ -114,14 +114,14 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                         <tr>
                             <td>
                                 {newUnitType.customNamesAllowed ?
-                                    <input type="text" placeholder="Name"
+                                    <input type="text" value={newUnitName}
                                            onChange={e => setNewUnitName(e.target.value)}/>
                                     :
                                     newUnitType.defaultName
                                 }
                             </td>
                             <td>
-                                <input min={1} type="number" placeholder="Level"
+                                <input min={1} type="number" value={newUnitLevel}
                                        onChange={e => setNewUnitLevel(+e.target.value)}/>
                             </td>
                             <td>
@@ -134,6 +134,14 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                             </td>
                             <td>
                                 <button onClick={async function () {
+                                    const data = {
+                                        name: newUnitName,
+                                        level: newUnitLevel,
+                                        unitType: newUnitType.name,
+                                    };
+
+                                    console.log("data", data);
+
                                     const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addUnit`, {
                                         method: "POST",
                                         headers: {
@@ -141,11 +149,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                             'Content-Type': 'application/json',
                                         },
                                         credentials: 'include',
-                                        body: JSON.stringify({
-                                            name: newUnitName,
-                                            level: newUnitLevel,
-                                            unitType: newUnitType,
-                                        })
+                                        body: JSON.stringify(data)
                                     });
                                     console.log("response", response);
                                 }}>
