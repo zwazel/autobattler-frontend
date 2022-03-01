@@ -10,6 +10,7 @@ import Formations from "./Formations";
 import ProfileHeader from "./ProfileHeader";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
+import GetServerInfos from "./misc/GetServerInfos";
 
 interface userInfos {
     username: string,
@@ -200,6 +201,7 @@ function NavigationCaller(props: { user: User, unitTypes: UnitType[] }) {
                     <Route path={"formations/"} element={<Formations unitTypes={unitTypes}/>}/>
                 </Route>
                 <Route path={"/loader"} element={<Loader/>}/>
+                <Route path={"/serverInfos"} element={<GetServerInfos/>}/>
                 <Route path={"*"} element={<NotFound/>}/>
             </Routes>
         </>
