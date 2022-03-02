@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
 import PIXI from "pixi.js";
 import {Sprite, Stage} from '@inlet/react-pixi'
-import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
+// import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
+import test from '../assets/img/units/my_first_unit/test.png'
 import {UnitType} from "./Navigation";
 
 // interface Formation {
@@ -26,6 +27,8 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
         width: window.innerWidth / 1.5,
         height: window.innerHeight / 1.5
     };
+
+    const gridSize = 64;
 
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as Draggable;
@@ -60,8 +63,8 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
             if (newPosition.y > (stageSize.height - spriteHeight)) {
                 newPosition.y = (stageSize.height - spriteHeight);
             }
-            sprite.x = newPosition.x;
-            sprite.y = newPosition.y;
+            sprite.x = Math.round(newPosition.x / gridSize) * gridSize;
+            sprite.y = Math.round(newPosition.y / gridSize) * gridSize;
         }
     };
 
@@ -91,7 +94,7 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
                 backgroundColor: 0x4287f5,
             }}>
                 <Sprite
-                    image={myFirstUnitImage}
+                    image={test}
                     x={100} y={100}
                     anchor={0.5}
                     interactive
