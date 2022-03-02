@@ -22,6 +22,11 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
     // const unitTypes = props.unitTypes;
     // const [formations, setFormations] = useState<Formation[]>([]);
 
+    const stageSize = {
+        width: window.innerWidth / 1.5,
+        height: window.innerHeight / 1.5
+    };
+
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as Draggable;
         sprite.alpha = 0.5;
@@ -40,6 +45,21 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
         const sprite = event.currentTarget as Draggable;
         if (sprite.dragging) {
             const newPosition = sprite.data!.getLocalPosition(sprite.parent);
+            const spriteWidth = sprite.parent.width / 2;
+            const spriteHeight = sprite.parent.height / 2;
+
+            if (newPosition.x < spriteWidth) {
+                newPosition.x = spriteWidth;
+            }
+            if (newPosition.y < spriteHeight) {
+                newPosition.y = spriteHeight;
+            }
+            if (newPosition.x > (stageSize.width - spriteWidth)) {
+                newPosition.x = (stageSize.width - spriteWidth);
+            }
+            if (newPosition.y > (stageSize.height - spriteHeight)) {
+                newPosition.y = (stageSize.height - spriteHeight);
+            }
             sprite.x = newPosition.x;
             sprite.y = newPosition.y;
         }
@@ -67,7 +87,7 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
     return (
         <>
             <h1>Formations</h1>
-            <Stage width={500} height={500} options={{
+            <Stage width={stageSize.width} height={stageSize.height} options={{
                 backgroundColor: 0x4287f5,
             }}>
                 <Sprite
