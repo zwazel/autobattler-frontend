@@ -13,6 +13,7 @@ interface UnitInterface {
     level: number;
     unitType: string;
     customNamesAllowed: boolean;
+    dateCollected: Date;
 }
 
 export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
@@ -54,12 +55,33 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                     level: unit.level,
                     unitType: unit.unitType,
                     customNamesAllowed: unit.customNamesAllowed,
+                    dateCollected: unit.dateCollected,
                 });
             }
             setUnits({units: units});
             setLoaded(true);
         });
     }, []);
+
+    function getTimeFormatted(dateString: Date) {
+        const date = new Date(dateString);
+
+        const year = date.getFullYear();
+
+        const month = date.getMonth() + 1;
+        const monthString = (month < 10) ? "0" + month : month;
+
+        const day = date.getDate();
+        const dayString = (day < 10) ? "0" + day : day;
+
+        const hours = date.getHours();
+        const hoursString = (hours < 10) ? "0" + hours : hours;
+
+        const minutes = date.getMinutes();
+        const minutesString = minutes < 10 ? '0' + minutes : minutes;
+
+        return dayString + '.' + monthString + '.' + year + ', ' + hoursString + ':' + minutesString;
+    }
 
     return (
         <div>
@@ -80,6 +102,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                             <th>Name</th>
                             <th>Level</th>
                             <th>Type</th>
+                            <th>Date collected</th>
                             <th>Update</th>
                         </tr>
                         </thead>
@@ -98,6 +121,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                                onChange={e => unit.level = +e.target.value}/>
                                     </td>
                                     <td>{unit.unitType}</td>
+                                    <td>{getTimeFormatted(unit.dateCollected)}</td>
                                     <td>
                                         <button onClick={async function () {
                                             await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/updateUnit`, {
@@ -142,6 +166,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                         })}
                                     </select>
                                 </td>
+                                <td/>
                                 <td>
                                     <button onClick={async function () {
                                         const data = {
@@ -168,6 +193,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                                 level: unit.level,
                                                 unitType: unit.unitType,
                                                 customNamesAllowed: unit.customNamesAllowed,
+                                                dateCollected: unit.dateCollected,
                                             } as UnitInterface;
                                             // add newUnit to units
                                             let myUnits = units.units;
