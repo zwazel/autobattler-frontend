@@ -99,13 +99,11 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         const unit = props.unit;
 
         return (
-            <Draggable key={unit.type.typeName + "-" + unit.id} image={unit.image} x={unit.position.x}
-                       y={unit.position.y} gridCellSize={gridCellSize} stageSize={stageSize} alignToGrid={true}/>
+            <Draggable key={unit.type.typeName + "-" + unit.id} image={unit.image}
+                       x={(unit.position.x * gridCellSize) - gridCellSize / 2}
+                       y={(unit.position.y * gridCellSize) - gridCellSize / 2}
+                       gridCellSize={gridCellSize} stageSize={stageSize} alignToGrid={true}/>
         )
-    }
-
-    const loadFormation = (formation: Formation) => {
-        setSelectedFormation(formation);
     }
 
     // display all the formations
@@ -117,11 +115,16 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     <div className="formations">
                         {formations.map(formation => (
                             <button key={formation.id} onClick={() => {
-                                loadFormation(formation)
+                                setSelectedFormation(formation);
                             }}>
                                 <p>{formation.id}</p>
                             </button>
                         ))}
+                        <button onClick={() => {
+                            // setSelectedFormation(undefined)
+                        }}>
+                            <p>New</p>
+                        </button>
                     </div>
                     {done ? (
                         <Stage
