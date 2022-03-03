@@ -16,8 +16,9 @@ export default class Unit {
     private _position: Position;
     private _health: number;
     private _image: string;
+    private _dateCollected: Date;
 
-    constructor(name: string, level: number, image: string, type: UnitTypes, scaleAttributes: Function, id?: number, side?: Side, position?: Position) {
+    constructor(name: string, level: number, image: string, type: UnitTypes, scaleAttributes: Function, id?: number, side?: Side, position?: Position, dateCollected?: Date) {
         this._id = id || -1;
         this._side = side || Side.NEUTRAL;
         this._type = type;
@@ -26,6 +27,7 @@ export default class Unit {
         this._position = position || new Position(0, 0);
         this._health = scaleAttributes(level);
         this._image = image;
+        this._dateCollected = dateCollected || new Date();
     }
 
     get id(): number {
@@ -90,5 +92,13 @@ export default class Unit {
 
     set image(value: string) {
         this._image = value;
+    }
+
+    get dateCollected(): Date {
+        return this._dateCollected;
+    }
+
+    set dateCollected(value: Date) {
+        this._dateCollected = value;
     }
 }

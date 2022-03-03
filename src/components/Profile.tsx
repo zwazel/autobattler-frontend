@@ -2,24 +2,14 @@ import User from "./classes/User";
 import {useEffect, useState} from "react";
 import Loader from "./Loader";
 import UnitTypes from "./classes/UnitTypes";
-
-interface Units {
-    units: UnitInterface[];
-}
-
-interface UnitInterface {
-    id: number;
-    name: string;
-    level: number;
-    unitType: string;
-    customNamesAllowed: boolean;
-    dateCollected: Date;
-}
+import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
+import Unit from "./classes/units/Unit";
+import ParseUnitType from "./classes/utils/ParseUnitType";
 
 export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
     const user = props.user;
     const unitTypes = props.unitTypes;
-    const [units, setUnits] = useState<Units>({units: []});
+    const [units, setUnits] = useState<Unit[]>([]);
     const [loaded, setLoaded] = useState(false);
     const [newUnitName, setNewUnitName] = useState((unitTypes.length > 0) ? unitTypes[0].typeName : "");
     const [newUnitType, setNewUnitType] = useState<UnitTypes>((unitTypes.length > 0) ? unitTypes[0] : new UnitTypes(false, "undefined", "undefined"));
@@ -33,31 +23,12 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
     }
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllUnits`, {
-            method: "GET",
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-        }).then(r => {
-            return r.json()
-        }).then(r => {
-            let units: UnitInterface[] = [];
-            for (let unit of r) {
-                units.push({
-                    id: unit.id,
-                    name: unit.name,
-                    level: unit.level,
-                    unitType: unit.unitType,
-                    customNamesAllowed: unit.customNamesAllowed,
-                    dateCollected: unit.dateCollected,
-                });
-            }
-            setUnits({units: units});
+        GetAllUnitsOfUser(unitTypes).then(units => {
+            setUnits(units);
+            console.log(units);
             setLoaded(true);
         });
-    }, []);
+    }, [unitTypes]);
 
     function getTimeFormatted(dateString: Date) {
         const date = new Date(dateString);
@@ -103,10 +74,10 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
                         </tr>
                         </thead>
                         <tbody>
-                        {units.units.map(unit => {
+                        {units.map(unit => {
                             return (
                                 <tr key={unit.id}>
-                                    <td>{unit.customNamesAllowed ?
+                                    <td>{unit.type.customNamesAllowed ?
                                         <input type="text" defaultValue={unit.name}
                                                onChange={e => unit.name = e.target.value}/>
                                         :
@@ -116,7 +87,7 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
                                         <input min={1} type="number" defaultValue={unit.level}
                                                onChange={e => unit.level = +e.target.value}/>
                                     </td>
-                                    <td>{unit.unitType}</td>
+                                    <td>{unit.type.typeName}</td>
                                     <td>{getTimeFormatted(unit.dateCollected)}</td>
                                     <td>
                                         <button onClick={async function () {
@@ -182,23 +153,22 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
                                         });
 
                                         if (response.ok) {
-                                            const unit = await response.json() as UnitInterface;
-                                            const newUnit = {
-                                                id: unit.id,
-                                                name: unit.name,
-                                                level: unit.level,
-                                                unitType: unit.unitType,
-                                                customNamesAllowed: unit.customNamesAllowed,
-                                                dateCollected: unit.dateCollected,
-                                            } as UnitInterface;
-                                            // add newUnit to units
-                                            let myUnits = units.units;
-                                            myUnits.push(newUnit);
-                                            setUnits({units: myUnits});
-                                            setNewUnitName(newUnitType.defaultName);
-                                            setNewUnitLevel(1);
-                                            setAmountUnits(amountUnits + 1);
-                                            scrollToBottom();
+                                            const unit = await response.json();
+                                            console.log(unit);
+                                            const unitType = unitTypes.find(ut => ut.typeName === unit.unitType);
+                                            if (unitType) {
+                                                const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, undefined, undefined, unit.dateCollected);
+                                                // add newUnit to units
+                                                let myUnits = units;
+                                                myUnits.push(newUnit);
+                                                setUnits(myUnits);
+                                                setNewUnitName(newUnitType.defaultName);
+                                                setNewUnitLevel(1);
+                                                setAmountUnits(amountUnits + 1);
+                                                scrollToBottom();
+                                            } else {
+                                                throw new Error("Unit type not found");
+                                            }
                                         }
                                     }}>
                                         Add
