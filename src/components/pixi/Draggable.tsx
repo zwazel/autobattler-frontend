@@ -1,5 +1,5 @@
 import React from "react";
-import { Sprite } from "@inlet/react-pixi";
+import {Sprite} from "@inlet/react-pixi";
 import PIXI from "pixi.js";
 import Position from "../classes/utils/Position";
 
@@ -16,7 +16,7 @@ interface Props {
     gridCellSize: number;
 }
 
-const Draggable = ({ image, x, y, stageSize, gridCellSize }: Props) => {
+const Draggable = ({image, x, y, stageSize, gridCellSize}: Props) => {
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as PixiDraggable;
         sprite.alpha = 0.5;
