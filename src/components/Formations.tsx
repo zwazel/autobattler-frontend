@@ -23,6 +23,7 @@ interface UnitFormation {
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
     const [loaded, setLoaded] = useState<boolean>(false);
+    const [done, setDone] = useState<boolean>(false);
     const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [formations, setFormations] = useState<Formation[]>([]);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
@@ -42,6 +43,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         setStageSize(newStageSize);
         setGridCellSize(gridCellSize);
         setGridSize(gridSize);
+        setDone(true);
     };
 
     useEffect(() => {
@@ -56,7 +58,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             .then(response => response.json())
             .then(data => {
                 const gridSize = new Position(data.width, data.height);
-                scalePlayField(gridSize);
+                scalePlayField(new Position(10, 10));
             }).then(() => {
 
             fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
@@ -123,35 +125,40 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             </button>
                         ))}
                     </div>
-
-                    <Stage
-                        width={stageSize.x}
-                        height={stageSize.y}
-                        options={{
-                            backgroundColor: 0x4287f5,
-                        }}
-                    >
-                        <Grid width={stageSize.x} height={stageSize.y} pitch={{x: gridCellSize, y: gridCellSize}}/>
-                        <Viewport width={stageSize.x} height={stageSize.y}>
-                            <Rectangle
-                                x={0}
-                                y={0}
-                                width={stageSize.x}
-                                height={stageSize.y}
-                            />
-                            {selectedFormation ? (
-                                <Container>
-                                    <Container key={selectedFormation.id}>
-                                        {selectedFormation.units.map(unit => (
-                                            getUnitSprite({unit: unit.unit})
-                                        ))}
+                    {done ? (
+                        <Stage
+                            width={stageSize.x}
+                            height={stageSize.y}
+                            options={{
+                                backgroundColor: 0x4287f5,
+                            }}
+                        >
+                            <Grid width={stageSize.x} height={stageSize.y} pitch={{x: gridCellSize, y: gridCellSize}}/>
+                            <Viewport width={stageSize.x} height={stageSize.y}>
+                                <Rectangle
+                                    x={0}
+                                    y={0}
+                                    width={stageSize.x}
+                                    height={stageSize.y}
+                                />
+                                {selectedFormation ? (
+                                    <Container>
+                                        <Container key={selectedFormation.id}>
+                                            {selectedFormation.units.map(unit => (
+                                                getUnitSprite({unit: unit.unit})
+                                            ))}
+                                        </Container>
                                     </Container>
-                                </Container>
-                            ) : (
-                                <></>
-                            )}
-                        </Viewport>
-                    </Stage>
+                                ) : (
+                                    <></>
+                                )}
+                            </Viewport>
+                        </Stage>
+                    ) : (
+                        <p>
+                            We're still working on it... Please wait :)
+                        </p>
+                    )}
                 </>
             ) : (
                 <Loader/>
