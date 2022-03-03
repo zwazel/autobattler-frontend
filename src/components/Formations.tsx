@@ -24,7 +24,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
     const [loaded, setLoaded] = useState<boolean>(false);
     const [done, setDone] = useState<boolean>(false);
-    const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [formations, setFormations] = useState<Formation[]>([]);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
     const [stageSize, setStageSize] = useState<Position>(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
@@ -42,7 +41,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
         setStageSize(newStageSize);
         setGridCellSize(gridCellSize);
-        setGridSize(gridSize);
         setDone(true);
     };
 
@@ -58,7 +56,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             .then(response => response.json())
             .then(data => {
                 const gridSize = new Position(data.width, data.height);
-                scalePlayField(new Position(10, 10));
+                scalePlayField(gridSize);
             }).then(() => {
 
             fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
