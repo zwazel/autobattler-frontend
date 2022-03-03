@@ -129,14 +129,6 @@ object-assign
  */
 
 /*!
- * @pixi/utils - v6.2.2
- * Compiled Wed, 26 Jan 2022 16:23:27 UTC
- *
- * @pixi/utils is licensed under the MIT License.
- * http://www.opensource.org/licenses/mit-license
- */
-
-/*!
  * pixi.js - v6.2.2
  * Compiled Wed, 26 Jan 2022 16:23:27 UTC
  *
