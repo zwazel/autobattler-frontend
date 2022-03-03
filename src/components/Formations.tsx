@@ -179,7 +179,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                 <div>
                                     <p>{mode}</p>
                                     {units.map(unit => (
-                                        <button key={unit.id} onClick={() => {
+                                        <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
                                             if (selectedFormation) {
                                                 selectedFormation.units.push(unit);
                                                 setSelectedFormation(selectedFormation);
@@ -195,7 +195,8 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     {units.map(unit => (
                                         <>
                                             {selectedFormation && !selectedFormation.units.find(u => u.id === unit.id) ? (
-                                                <button key={unit.id} onClick={() => {
+                                                <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
+                                                    unit.position = findFreeSpace();
                                                     selectedFormation.units.push(unit);
                                                     setSelectedFormation(selectedFormation);
                                                     console.log("addedUnitToFormation", unit);
