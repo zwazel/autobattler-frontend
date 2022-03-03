@@ -20,6 +20,12 @@ interface UnitFormation {
     unit: Unit;
 }
 
+enum Mode {
+    ADD = 'ADD',
+    EDIT = 'EDIT',
+    IDLE = 'IDLE'
+}
+
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
     const [loaded, setLoaded] = useState<boolean>(false);
@@ -28,6 +34,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
     const [stageSize, setStageSize] = useState<Position>(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
     const [gridCellSize, setGridCellSize] = useState<number>(64);
+    const [mode, setMode] = useState<Mode>(Mode.IDLE);
 
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
@@ -116,16 +123,23 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                         {formations.map(formation => (
                             <button key={formation.id} onClick={() => {
                                 setSelectedFormation(formation);
+                                setMode(Mode.EDIT);
                             }}>
                                 <p>{formation.id}</p>
                             </button>
                         ))}
                         <button onClick={() => {
-                            // setSelectedFormation(undefined)
+                            setSelectedFormation(null);
+                            setMode(Mode.ADD);
                         }}>
                             <p>New</p>
                         </button>
                     </div>
+                    {(mode === Mode.ADD) ? (
+                        <p>ADD</p>
+                    ) : (
+                        <p>{mode}</p>
+                    )}
                     {done ? (
                         <Stage
                             width={stageSize.x}
