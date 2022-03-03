@@ -102,7 +102,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     formations.push(formation);
                 }
                 setFormations(formations);
-                console.log("formations", formations);
             })
     }, [unitTypes]);
 
