@@ -6,6 +6,7 @@ import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import Unit from "./classes/units/Unit";
+import Loader from "./Loader";
 
 interface Formation {
     id: number;
@@ -23,6 +24,8 @@ interface Draggable extends PIXI.DisplayObject {
 
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
+    const [loaded, setLoaded] = useState(false);
+    const [formationSize, setFormationSize] = useState(new Position(0, 0));
     const [formations, setFormations] = useState<Formation[]>([]);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
 
@@ -31,7 +34,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         height: window.innerHeight * 0.5
     };
 
-    const gridSize = 5;
+    const gridSize = 64;
 
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as Draggable;
@@ -103,6 +106,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     formations.push(formation);
                 }
                 setFormations(formations);
+                setLoaded(true);
             })
     }, [unitTypes]);
 
@@ -133,31 +137,37 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     return (
         <>
             <h1>Formations</h1>
-            <div className="formations">
-                {formations.map(formation => (
-                    <button key={formation.id} onClick={() => {
-                        loadFormation(formation)
-                    }}>
-                        <h2>{formation.id}</h2>
-                    </button>
-                ))}
-            </div>
+            {loaded ? (
+                <>
+                    <div className="formations">
+                        {formations.map(formation => (
+                            <button key={formation.id} onClick={() => {
+                                loadFormation(formation)
+                            }}>
+                                <p>{formation.id}</p>
+                            </button>
+                        ))}
+                    </div>
 
-            <Stage width={stageSize.width} height={stageSize.height} options={{
-                backgroundColor: 0x4287f5,
-            }}>
-                {selectedFormation ? (
-                    <Container>
-                        <Container key={selectedFormation.id}>
-                            {selectedFormation.units.map(unit => (
-                                getUnitSprite({unit: unit.unit})
-                            ))}
-                        </Container>
-                    </Container>
-                ) : (
-                    <></>
-                )}
-            </Stage>
+                    <Stage width={stageSize.width} height={stageSize.height} options={{
+                        backgroundColor: 0x4287f5,
+                    }}>
+                        {selectedFormation ? (
+                            <Container>
+                                <Container key={selectedFormation.id}>
+                                    {selectedFormation.units.map(unit => (
+                                        getUnitSprite({unit: unit.unit})
+                                    ))}
+                                </Container>
+                            </Container>
+                        ) : (
+                            <></>
+                        )}
+                    </Stage>
+                </>
+            ) : (
+                <Loader/>
+            )}
         </>
     )
 }
