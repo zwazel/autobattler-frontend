@@ -38,20 +38,20 @@ const Draggable = ({image, x, y, stageSize, gridCellSize}: Props) => {
             const spriteWidth = sprite.parent.width / 2;
             const spriteHeight = sprite.parent.height / 2;
 
-            if (newPosition.x < spriteWidth) {
-                newPosition.x = spriteWidth;
+            if (newPosition.x < 0) {
+                newPosition.x = gridCellSize / 2;
             }
-            if (newPosition.y < spriteHeight) {
-                newPosition.y = spriteHeight;
+            if (newPosition.y < 0) {
+                newPosition.y = gridCellSize / 2;
             }
-            if (newPosition.x > (stageSize.x - spriteWidth)) {
-                newPosition.x = (stageSize.x - spriteWidth);
+            if (newPosition.x > (stageSize.x)) {
+                newPosition.x = (stageSize.x - gridCellSize / 2);
             }
-            if (newPosition.y > (stageSize.y - spriteHeight)) {
-                newPosition.y = (stageSize.y - spriteHeight);
+            if (newPosition.y > (stageSize.y)) {
+                newPosition.y = (stageSize.y - gridCellSize / 2);
             }
-            sprite.x = Math.round(newPosition.x / gridCellSize) * gridCellSize;
-            sprite.y = Math.round(newPosition.y / gridCellSize) * gridCellSize;
+            sprite.x = Math.round(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
+            sprite.y = Math.round(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
         }
     };
 
