@@ -25,16 +25,11 @@ interface Draggable extends PIXI.DisplayObject {
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
     const [loaded, setLoaded] = useState(false);
-    const [formationSize, setFormationSize] = useState(new Position(0, 0));
+    const [gridSize, setGridSize] = useState(new Position(0, 0));
     const [formations, setFormations] = useState<Formation[]>([]);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
-
-    const stageSize = {
-        width: window.innerWidth * 0.75,
-        height: window.innerHeight * 0.5
-    };
-
-    const gridSize = 5;
+    const [stageSize, setStageSize] = useState(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
+    const [gridCellSize, setGridCellSize] = useState(5);
 
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as Draggable;
@@ -63,19 +58,19 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             if (newPosition.y < spriteHeight) {
                 newPosition.y = spriteHeight;
             }
-            if (newPosition.x > (stageSize.width - spriteWidth)) {
-                newPosition.x = (stageSize.width - spriteWidth);
+            if (newPosition.x > (stageSize.x - spriteWidth)) {
+                newPosition.x = (stageSize.x - spriteWidth);
             }
-            if (newPosition.y > (stageSize.height - spriteHeight)) {
-                newPosition.y = (stageSize.height - spriteHeight);
+            if (newPosition.y > (stageSize.y - spriteHeight)) {
+                newPosition.y = (stageSize.y - spriteHeight);
             }
-            sprite.x = Math.round(newPosition.x / gridSize) * gridSize;
-            sprite.y = Math.round(newPosition.y / gridSize) * gridSize;
+            sprite.x = Math.round(newPosition.x / gridCellSize) * gridCellSize;
+            sprite.y = Math.round(newPosition.y / gridCellSize) * gridCellSize;
         }
     };
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
+        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getGridSize/user`, {
             method: "GET",
             headers: {
                 Accept: 'application/json',
@@ -83,31 +78,46 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             },
             credentials: 'include',
         })
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
-                const formations: Formation[] = [];
-                for (let json of data) {
-                    const formationID = json.id;
-                    const jsonFormation = JSON.parse(json.formationJson);
-                    const unitsInFormation: Unit[] = [];
-                    for (let unitJson of jsonFormation) {
-                        const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.name);
-                        if (unitType) {
-                            const unit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, undefined, new Position(unitJson.position.x, unitJson.position.y));
-                            unitsInFormation.push(unit);
-                        } else {
-                            throw new Error("UnitType not found");
-                        }
-                    }
-                    const formation: Formation = {
-                        id: formationID,
-                        units: unitsInFormation.map(unit => ({unit}))
-                    };
-                    formations.push(formation);
-                }
-                setFormations(formations);
-                setLoaded(true);
+                const gridSize = new Position(data.width, data.height);
+                setGridSize(gridSize);
+            }).then(() => {
+
+            fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
+                method: "GET",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
             })
+                .then(res => res.json())
+                .then(data => {
+                    const formations: Formation[] = [];
+                    for (let json of data) {
+                        const formationID = json.id;
+                        const jsonFormation = JSON.parse(json.formationJson);
+                        const unitsInFormation: Unit[] = [];
+                        for (let unitJson of jsonFormation) {
+                            const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.name);
+                            if (unitType) {
+                                const unit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, undefined, new Position(unitJson.position.x, unitJson.position.y));
+                                unitsInFormation.push(unit);
+                            } else {
+                                throw new Error("UnitType not found");
+                            }
+                        }
+                        const formation: Formation = {
+                            id: formationID,
+                            units: unitsInFormation.map(unit => ({unit}))
+                        };
+                        formations.push(formation);
+                    }
+                    setFormations(formations);
+                    setLoaded(true);
+                })
+        });
     }, [unitTypes]);
 
     const getUnitSprite = (props: { unit: Unit }) => {
@@ -117,7 +127,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             <Sprite
                 key={unit.id}
                 image={unit.image}
-                x={unit.position.x * gridSize} y={unit.position.y * gridSize}
+                x={unit.position.x * gridCellSize} y={unit.position.y * gridCellSize}
                 anchor={0.5}
                 interactive
                 buttonMode
@@ -149,7 +159,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                         ))}
                     </div>
 
-                    <Stage width={stageSize.width} height={stageSize.height} options={{
+                    <Stage width={stageSize.x} height={stageSize.y} options={{
                         backgroundColor: 0x4287f5,
                     }}>
                         {selectedFormation ? (
