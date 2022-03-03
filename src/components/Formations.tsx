@@ -105,7 +105,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         const unit = props.unit;
 
         return (
-            <Draggable image={unit.image} x={unit.position.x} y={unit.position.y} gridCellSize={gridCellSize}
+            <Draggable key={unit.type.typeName+"-"+unit.id} image={unit.image} x={unit.position.x} y={unit.position.y} gridCellSize={gridCellSize}
                        stageSize={stageSize}/>
         )
     }
