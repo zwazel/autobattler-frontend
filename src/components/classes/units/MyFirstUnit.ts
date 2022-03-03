@@ -4,7 +4,7 @@ import UnitTypes from "../UnitTypes";
 import Position from "../utils/Position";
 
 export default class MyFirstUnit extends Unit {
-    constructor(name: string, level: number, id?: number, side?: Side, position?: Position, dateCollected?: Date) {
+    constructor(name: string, level: number, id?: number, side?: Side, position?: Position, dateCollected?: string) {
         super(name, level, UnitImage,
             new UnitTypes(true, "MY_FIRST_UNIT", "MY_FIRST_UNIT"),
             function () {

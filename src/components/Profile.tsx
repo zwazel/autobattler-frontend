@@ -30,7 +30,7 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
         });
     }, [unitTypes]);
 
-    function getTimeFormatted(dateString: Date) {
+    function getTimeFormatted(dateString: string) {
         const date = new Date(dateString);
 
         const year = date.getFullYear();
