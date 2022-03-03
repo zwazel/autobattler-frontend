@@ -24,10 +24,11 @@ interface Draggable extends PIXI.DisplayObject {
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
     const [formations, setFormations] = useState<Formation[]>([]);
+    const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
 
     const stageSize = {
-        width: window.innerWidth / 1.5,
-        height: window.innerHeight / 1.5
+        width: window.innerWidth * 0.75,
+        height: window.innerHeight * 0.5
     };
 
     const gridSize = 5;
@@ -124,22 +125,38 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         )
     }
 
+    const loadFormation = (formation: Formation) => {
+        setSelectedFormation(formation);
+    }
+
     // display all the formations
     return (
         <>
             <h1>Formations</h1>
+            <div className="formations">
+                {formations.map(formation => (
+                    <button key={formation.id} onClick={() => {
+                        loadFormation(formation)
+                    }}>
+                        <h2>{formation.id}</h2>
+                    </button>
+                ))}
+            </div>
+
             <Stage width={stageSize.width} height={stageSize.height} options={{
                 backgroundColor: 0x4287f5,
             }}>
-                <Container>
-                    {formations.map(formation => (
-                        <Container key={formation.id}>
-                            {formation.units.map(currentUnit => (
-                                getUnitSprite({unit: currentUnit.unit})
+                {selectedFormation ? (
+                    <Container>
+                        <Container key={selectedFormation.id}>
+                            {selectedFormation.units.map(unit => (
+                                getUnitSprite({unit: unit.unit})
                             ))}
                         </Container>
-                    ))}
-                </Container>
+                    </Container>
+                ) : (
+                    <></>
+                )}
             </Stage>
         </>
     )
