@@ -3,7 +3,6 @@ import {Container, Stage} from '@inlet/react-pixi'
 // import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
-import ParseUnitType from "./classes/utils/ParseUnitType";
 import Unit from "./classes/units/Unit";
 import Loader from "./Loader";
 import Viewport from "./pixi/Viewport";
@@ -27,7 +26,7 @@ enum Mode {
     IDLE = 'IDLE'
 }
 
-export default function Formations(props: {unitTypes: UnitTypes[] }) {
+export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
     const [loaded, setLoaded] = useState<boolean>(false);
     const [done, setDone] = useState<boolean>(false);
@@ -70,45 +69,52 @@ export default function Formations(props: {unitTypes: UnitTypes[] }) {
             .then(() => {
                 GetAllUnitsOfUser(unitTypes).then(units => {
                     setUnits(units);
-                });
-            })
-            // fetch all formations of the user, and add them to the array with their units
-            .then(() => {
-                fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
-                    method: "GET",
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
+                    return units;
                 })
-                    .then(res => res.json())
-                    .then(data => {
-                        const formations: Formation[] = [];
-                        for (let json of data) {
-                            const formationID = json.id;
-                            const jsonFormation = JSON.parse(json.formationJson);
-                            console.log("jsonFormation", jsonFormation);
-                            const unitsInFormation: Unit[] = [];
-                            for (let unitJson of jsonFormation) {
-                                const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.name);
-                                if (unitType) {
-                                    const unit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, undefined, new Position(unitJson.position.x, unitJson.position.y));
-                                    unitsInFormation.push(unit);
-                                } else {
-                                    throw new Error("UnitType not found");
+                    // fetch all formations of the user, and add them to the array with their units
+                    .then((units) => {
+                        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
+                            method: "GET",
+                            headers: {
+                                Accept: 'application/json',
+                                'Content-Type': 'application/json',
+                            },
+                            credentials: 'include',
+                        })
+                            .then(res => res.json())
+                            .then(data => {
+                                const formations: Formation[] = [];
+                                for (let json of data) {
+                                    const formationID = json.id;
+                                    const jsonFormation = JSON.parse(json.formationJson);
+                                    const unitsInFormation: Unit[] = [];
+                                    for (let unitJson of jsonFormation) {
+                                        const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.name);
+                                        if (unitType) {
+                                            const unit = units.find(unit => unit.id === unitJson.id);
+                                            if (unit) {
+                                                unit.position = new Position(unitJson.position.x, unitJson.position.y);
+                                                unitsInFormation.push(unit);
+                                            } else {
+                                                throw new Error("unit not found");
+                                            }
+                                        } else {
+                                            throw new Error("UnitType not found");
+                                        }
+                                    }
+                                    const formation: Formation = {
+                                        id: formationID,
+                                        units: unitsInFormation.map(unit => ({unit}))
+                                    };
+                                    formations.push(formation);
                                 }
-                            }
-                            const formation: Formation = {
-                                id: formationID,
-                                units: unitsInFormation.map(unit => ({unit}))
-                            };
-                            formations.push(formation);
-                        }
-                        setFormations(formations);
-                        setLoaded(true);
-                    })
-            });
+                                setFormations(formations);
+                                console.log(formations);
+                                setLoaded(true);
+                            })
+                    });
+                ;
+            })
     }, [unitTypes]);
 
     const getUnitSprite = (props: { unit: Unit }) => {
