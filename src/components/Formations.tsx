@@ -100,7 +100,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
         return (
             <Draggable key={unit.type.typeName + "-" + unit.id} image={unit.image} x={unit.position.x}
-                       y={unit.position.y} gridCellSize={gridCellSize} stageSize={stageSize}/>
+                       y={unit.position.y} gridCellSize={gridCellSize} stageSize={stageSize} alignToGrid={true}/>
         )
     }
 

@@ -14,9 +14,10 @@ interface Props {
     y: number;
     stageSize: Position;
     gridCellSize: number;
+    alignToGrid: boolean;
 }
 
-const Draggable = ({image, x, y, stageSize, gridCellSize}: Props) => {
+const Draggable = ({image, x, y, stageSize, gridCellSize, alignToGrid}: Props) => {
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as PixiDraggable;
         sprite.alpha = 0.5;
@@ -36,20 +37,25 @@ const Draggable = ({image, x, y, stageSize, gridCellSize}: Props) => {
         if (sprite.dragging) {
             const newPosition = sprite.data!.getLocalPosition(sprite.parent);
 
-            if (newPosition.x <= 0) {
-                newPosition.x = gridCellSize / 2;
+            if (alignToGrid) {
+                if (newPosition.x <= 0) {
+                    newPosition.x = gridCellSize / 2;
+                }
+                if (newPosition.y <= 0) {
+                    newPosition.y = gridCellSize / 2;
+                }
+                if (newPosition.x >= (stageSize.x)) {
+                    newPosition.x = (stageSize.x - gridCellSize / 2);
+                }
+                if (newPosition.y >= (stageSize.y)) {
+                    newPosition.y = (stageSize.y - gridCellSize / 2);
+                }
+                sprite.x = Math.floor(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
+                sprite.y = Math.floor(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
+            } else {
+                sprite.x = newPosition.x;
+                sprite.y = newPosition.y;
             }
-            if (newPosition.y <= 0) {
-                newPosition.y = gridCellSize / 2;
-            }
-            if (newPosition.x >= (stageSize.x)) {
-                newPosition.x = (stageSize.x - gridCellSize / 2);
-            }
-            if (newPosition.y >= (stageSize.y)) {
-                newPosition.y = (stageSize.y - gridCellSize / 2);
-            }
-            sprite.x = Math.floor(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
-            sprite.y = Math.floor(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
         }
     };
 
