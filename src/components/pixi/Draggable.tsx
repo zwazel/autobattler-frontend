@@ -35,23 +35,21 @@ const Draggable = ({image, x, y, stageSize, gridCellSize}: Props) => {
         const sprite = event.currentTarget as PixiDraggable;
         if (sprite.dragging) {
             const newPosition = sprite.data!.getLocalPosition(sprite.parent);
-            const spriteWidth = sprite.parent.width / 2;
-            const spriteHeight = sprite.parent.height / 2;
 
-            if (newPosition.x < 0) {
+            if (newPosition.x <= 0) {
                 newPosition.x = gridCellSize / 2;
             }
-            if (newPosition.y < 0) {
+            if (newPosition.y <= 0) {
                 newPosition.y = gridCellSize / 2;
             }
-            if (newPosition.x > (stageSize.x)) {
+            if (newPosition.x >= (stageSize.x)) {
                 newPosition.x = (stageSize.x - gridCellSize / 2);
             }
-            if (newPosition.y > (stageSize.y)) {
+            if (newPosition.y >= (stageSize.y)) {
                 newPosition.y = (stageSize.y - gridCellSize / 2);
             }
-            sprite.x = Math.round(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
-            sprite.y = Math.round(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
+            sprite.x = Math.floor(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
+            sprite.y = Math.floor(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
         }
     };
 

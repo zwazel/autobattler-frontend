@@ -34,14 +34,8 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         const scalar = Math.floor(window.innerWidth / defaultGridSize);
 
         const gridCellSize = defaultGridSize + scalar;
-        console.log(defaultGridSize, scalar, gridCellSize);
         let stageWidth = gridSize.x * gridCellSize;
         let stageHeight = gridSize.y * gridCellSize;
-
-        if (stageHeight > window.innerHeight * 0.75) {
-            stageHeight = window.innerHeight * 0.75;
-            console.log('scaled down');
-        }
 
         const newStageSize = new Position(stageWidth, stageHeight);
 
