@@ -5,7 +5,7 @@ import UnitTypes from "../UnitTypes";
 export default async function GetAllUnitsOfUser(unitTypes: UnitTypes[]): Promise<Unit[]> {
     let units: Unit[] = [];
 
-    fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllUnits`, {
+    await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllUnits`, {
         method: "GET",
         headers: {
             Accept: 'application/json',
@@ -25,7 +25,6 @@ export default async function GetAllUnitsOfUser(unitTypes: UnitTypes[]): Promise
             }
         }
     });
-
-    console.log("units", units);
+    
     return units;
 }

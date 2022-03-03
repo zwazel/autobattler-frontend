@@ -25,7 +25,6 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
     useEffect(() => {
         GetAllUnitsOfUser(unitTypes).then(units => {
             setUnits(units);
-            console.log(units);
             setLoaded(true);
         });
     }, [unitTypes]);
