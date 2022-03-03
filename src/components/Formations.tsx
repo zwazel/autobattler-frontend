@@ -34,7 +34,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         height: window.innerHeight * 0.5
     };
 
-    const gridSize = 64;
+    const gridSize = 5;
 
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as Draggable;
