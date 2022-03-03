@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import PIXI from "pixi.js";
-import {Sprite, Stage} from '@inlet/react-pixi'
+import {Container, Sprite, Stage} from '@inlet/react-pixi'
 // import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
@@ -23,7 +23,6 @@ interface Draggable extends PIXI.DisplayObject {
 
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
-    console.log("unitTypes", unitTypes);
     const [formations, setFormations] = useState<Formation[]>([]);
 
     const stageSize = {
@@ -31,7 +30,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         height: window.innerHeight / 1.5
     };
 
-    const gridSize = 64;
+    const gridSize = 5;
 
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as Draggable;
@@ -112,8 +111,9 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
         return (
             <Sprite
+                key={unit.id}
                 image={unit.image}
-                x={unit.position.x} y={unit.position.y}
+                x={unit.position.x * gridSize} y={unit.position.y * gridSize}
                 anchor={0.5}
                 interactive
                 buttonMode
@@ -132,7 +132,15 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             <Stage width={stageSize.width} height={stageSize.height} options={{
                 backgroundColor: 0x4287f5,
             }}>
-
+                <Container>
+                    {formations.map(formation => (
+                        <Container key={formation.id}>
+                            {formation.units.map(currentUnit => (
+                                getUnitSprite({unit: currentUnit.unit})
+                            ))}
+                        </Container>
+                    ))}
+                </Container>
             </Stage>
         </>
     )
