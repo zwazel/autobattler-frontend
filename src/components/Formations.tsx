@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react";
 import PIXI from "pixi.js";
-import {Container, Sprite, Stage} from '@inlet/react-pixi'
+import {Container, Graphics, Sprite, Stage} from '@inlet/react-pixi'
 // import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import Unit from "./classes/units/Unit";
 import Loader from "./Loader";
+import Viewport from "./Viewport";
+import Rectangle from "./graphics/Rectangle";
 
 interface Formation {
     id: number;
@@ -159,20 +161,34 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                         ))}
                     </div>
 
-                    <Stage width={stageSize.x} height={stageSize.y} options={{
-                        backgroundColor: 0x4287f5,
-                    }}>
-                        {selectedFormation ? (
-                            <Container>
-                                <Container key={selectedFormation.id}>
-                                    {selectedFormation.units.map(unit => (
-                                        getUnitSprite({unit: unit.unit})
-                                    ))}
+                    <Stage
+                        width={stageSize.x}
+                        height={stageSize.y}
+                        options={{
+                            backgroundColor: 0x4287f5,
+                        }}
+                    >
+                        <Viewport width={stageSize.x} height={stageSize.y}>
+                            <Graphics>
+                                <Rectangle
+                                    x={0}
+                                    y={0}
+                                    width={stageSize.x}
+                                    height={stageSize.y}
+                                />
+                            </Graphics>
+                            {selectedFormation ? (
+                                <Container>
+                                    <Container key={selectedFormation.id}>
+                                        {selectedFormation.units.map(unit => (
+                                            getUnitSprite({unit: unit.unit})
+                                        ))}
+                                    </Container>
                                 </Container>
-                            </Container>
-                        ) : (
-                            <></>
-                        )}
+                            ) : (
+                                <></>
+                            )}
+                        </Viewport>
                     </Stage>
                 </>
             ) : (
