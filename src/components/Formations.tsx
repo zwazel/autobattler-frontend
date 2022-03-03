@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
-import PIXI from "pixi.js";
-import {Container, Graphics, Sprite, Stage} from '@inlet/react-pixi'
+import {Container, Stage} from '@inlet/react-pixi'
 // import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
@@ -9,6 +8,8 @@ import Unit from "./classes/units/Unit";
 import Loader from "./Loader";
 import Viewport from "./Viewport";
 import Rectangle from "./graphics/Rectangle";
+import Draggable from "./pixi/Draggable";
+import Grid from "./pixi/Grid";
 
 interface Formation {
     id: number;
@@ -19,56 +20,34 @@ interface UnitFormation {
     unit: Unit;
 }
 
-interface Draggable extends PIXI.DisplayObject {
-    data: PIXI.InteractionData | null;
-    dragging: boolean;
-}
-
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
-    const [loaded, setLoaded] = useState(false);
-    const [gridSize, setGridSize] = useState(new Position(0, 0));
+    const [loaded, setLoaded] = useState<boolean>(false);
+    const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [formations, setFormations] = useState<Formation[]>([]);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
-    const [stageSize, setStageSize] = useState(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
-    const [gridCellSize, setGridCellSize] = useState(5);
+    const [stageSize, setStageSize] = useState<Position>(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
+    const [gridCellSize, setGridCellSize] = useState<number>(64);
 
-    const onDragStart = (event: PIXI.InteractionEvent) => {
-        const sprite = event.currentTarget as Draggable;
-        sprite.alpha = 0.5;
-        sprite.data = event.data;
-        sprite.dragging = true;
-    };
+    const scalePlayField = (gridSize: Position) => {
+        const defaultGridSize = 64;
+        const scalar = Math.floor(window.innerWidth / defaultGridSize);
 
-    const onDragEnd = (event: PIXI.InteractionEvent) => {
-        const sprite = event.currentTarget as Draggable;
-        sprite.alpha = 1;
-        sprite.dragging = false;
-        sprite.data = null;
-    };
+        const gridCellSize = defaultGridSize + scalar;
+        console.log(defaultGridSize, scalar, gridCellSize);
+        let stageWidth = gridSize.x * gridCellSize;
+        let stageHeight = gridSize.y * gridCellSize;
 
-    const onDragMove = (event: PIXI.InteractionEvent) => {
-        const sprite = event.currentTarget as Draggable;
-        if (sprite.dragging) {
-            const newPosition = sprite.data!.getLocalPosition(sprite.parent);
-            const spriteWidth = sprite.parent.width / 2;
-            const spriteHeight = sprite.parent.height / 2;
-
-            if (newPosition.x < spriteWidth) {
-                newPosition.x = spriteWidth;
-            }
-            if (newPosition.y < spriteHeight) {
-                newPosition.y = spriteHeight;
-            }
-            if (newPosition.x > (stageSize.x - spriteWidth)) {
-                newPosition.x = (stageSize.x - spriteWidth);
-            }
-            if (newPosition.y > (stageSize.y - spriteHeight)) {
-                newPosition.y = (stageSize.y - spriteHeight);
-            }
-            sprite.x = Math.round(newPosition.x / gridCellSize) * gridCellSize;
-            sprite.y = Math.round(newPosition.y / gridCellSize) * gridCellSize;
+        if (stageHeight > window.innerHeight * 0.75) {
+            stageHeight = window.innerHeight * 0.75;
+            console.log('scaled down');
         }
+
+        const newStageSize = new Position(stageWidth, stageHeight);
+
+        setStageSize(newStageSize);
+        setGridCellSize(gridCellSize);
+        setGridSize(gridSize);
     };
 
     useEffect(() => {
@@ -83,7 +62,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             .then(response => response.json())
             .then(data => {
                 const gridSize = new Position(data.width, data.height);
-                setGridSize(gridSize);
+                scalePlayField(gridSize);
             }).then(() => {
 
             fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
@@ -126,18 +105,8 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         const unit = props.unit;
 
         return (
-            <Sprite
-                key={unit.id}
-                image={unit.image}
-                x={unit.position.x * gridCellSize} y={unit.position.y * gridCellSize}
-                anchor={0.5}
-                interactive
-                buttonMode
-                pointerdown={onDragStart}
-                pointerup={onDragEnd}
-                pointerupoutside={onDragEnd}
-                pointermove={onDragMove}
-            />
+            <Draggable image={unit.image} x={unit.position.x} y={unit.position.y} gridCellSize={gridCellSize}
+                       stageSize={stageSize}/>
         )
     }
 
@@ -168,15 +137,14 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             backgroundColor: 0x4287f5,
                         }}
                     >
+                        <Grid width={stageSize.x} height={stageSize.y} pitch={{x: gridCellSize, y: gridCellSize}}/>
                         <Viewport width={stageSize.x} height={stageSize.y}>
-                            <Graphics>
-                                <Rectangle
-                                    x={0}
-                                    y={0}
-                                    width={stageSize.x}
-                                    height={stageSize.y}
-                                />
-                            </Graphics>
+                            <Rectangle
+                                x={0}
+                                y={0}
+                                width={stageSize.x}
+                                height={stageSize.y}
+                            />
                             {selectedFormation ? (
                                 <Container>
                                     <Container key={selectedFormation.id}>
