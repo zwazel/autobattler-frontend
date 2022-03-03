@@ -72,7 +72,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     return units;
                 })
                     // fetch all formations of the user, and add them to the array with their units
-                    .then((units) => {
+                    .then((units: Unit[]) => {
                         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
                             method: "GET",
                             headers: {
@@ -89,7 +89,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     const jsonFormation = JSON.parse(json.formationJson);
                                     const unitsInFormation: Unit[] = [];
                                     for (let unitJson of jsonFormation) {
-                                        const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.name);
+                                        const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.type);
                                         if (unitType) {
                                             const unit = units.find(unit => unit.id === unitJson.id);
                                             if (unit) {
@@ -158,7 +158,19 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     {mode !== Mode.IDLE ? (
                         <>
                             {(mode === Mode.ADD) ? (
-                                <p>{mode}</p>
+                                <div>
+                                    <p>{mode}</p>
+                                    {units.map(unit => (
+                                        <button key={unit.id} onClick={() => {
+                                            if (selectedFormation) {
+                                                selectedFormation.units.push({unit});
+                                                setSelectedFormation(selectedFormation);
+                                            }
+                                        }}>
+                                            <p>{unit.name}</p>
+                                        </button>
+                                    ))}
+                                </div>
                             ) : (
                                 <p>{mode}</p>
                             )}
