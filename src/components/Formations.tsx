@@ -113,12 +113,17 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         )
     }
 
-    // display all the formations
+    // todo - when editing / creating a formation, show all units that haven't been placed yet
     return (
         <>
             <h1>Formations</h1>
             {loaded ? (
                 <>
+                    {formations.length > 0 ? (
+                        <></>
+                    ) : (
+                        <p>You don't seem to have any formations, go ahead and create your first!</p>
+                    )}
                     <div className="formations">
                         {formations.map(formation => (
                             <button key={formation.id} onClick={() => {
@@ -136,7 +141,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                         </button>
                     </div>
                     {(mode === Mode.ADD) ? (
-                        <p>ADD</p>
+                        <p>{mode}</p>
                     ) : (
                         <p>{mode}</p>
                     )}
