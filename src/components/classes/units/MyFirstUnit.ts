@@ -1,14 +1,16 @@
-import Unit from "./Unit";
+import Unit, {Side} from "./Unit";
 import UnitImage from "../../../assets/img/units/my_first_unit/goodSoupMobil.png";
 import UnitTypes from "../UnitTypes";
 import Position from "../utils/Position";
 
 export default class MyFirstUnit extends Unit {
-    constructor(id: number, side: string, name: string, level: number, position: Position) {
-        super(id, side, new UnitTypes(true, "MY_FIRST_UNIT", "MY_FIRST_UNIT"), name, level, position, UnitImage, function () {
+    constructor(name: string, level: number, id?: number, side?: Side, position?: Position) {
+        super(name, level, UnitImage,
+            new UnitTypes(true, "MY_FIRST_UNIT", "MY_FIRST_UNIT"),
+            function () {
                 const defaultHealth = 10;
                 return (defaultHealth + (defaultHealth * ((level - 1) * 0.25)))
-            }
-        );
+            },
+            id, side, position);
     }
 }

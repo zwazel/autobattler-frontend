@@ -1,27 +1,30 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import PIXI from "pixi.js";
 import {Sprite, Stage} from '@inlet/react-pixi'
 // import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
-import test from '../assets/img/units/my_first_unit/test.png'
-import {UnitType} from "./Navigation";
+import UnitTypes from "./classes/UnitTypes";
+import Position from "./classes/utils/Position";
+import ParseUnitType from "./classes/utils/ParseUnitType";
+import Unit from "./classes/units/Unit";
 
-// interface Formation {
-//     id: number;
-//     units: UnitFormation[];
-// }
-//
-// interface UnitFormation {
-//     unit: Unit;
-// }
+interface Formation {
+    id: number;
+    units: UnitFormation[];
+}
+
+interface UnitFormation {
+    unit: Unit;
+}
 
 interface Draggable extends PIXI.DisplayObject {
     data: PIXI.InteractionData | null;
     dragging: boolean;
 }
 
-export default function Formations(props: { unitTypes: UnitType[] }) {
-    // const unitTypes = props.unitTypes;
-    // const [formations, setFormations] = useState<Formation[]>([]);
+export default function Formations(props: { unitTypes: UnitTypes[] }) {
+    const unitTypes = props.unitTypes;
+    console.log("unitTypes", unitTypes);
+    const [formations, setFormations] = useState<Formation[]>([]);
 
     const stageSize = {
         width: window.innerWidth / 1.5,
@@ -79,12 +82,48 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
         })
             .then(res => res.json())
             .then(data => {
+                const formations: Formation[] = [];
                 for (let json of data) {
+                    const formationID = json.id;
                     const jsonFormation = JSON.parse(json.formationJson);
-                    console.log(jsonFormation);
+                    const unitsInFormation: Unit[] = [];
+                    for (let unitJson of jsonFormation) {
+                        const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.name);
+                        if (unitType) {
+                            const unit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, undefined, new Position(unitJson.position.x, unitJson.position.y));
+                            unitsInFormation.push(unit);
+                        } else {
+                            throw new Error("UnitType not found");
+                        }
+                    }
+                    const formation: Formation = {
+                        id: formationID,
+                        units: unitsInFormation.map(unit => ({unit}))
+                    };
+                    formations.push(formation);
                 }
+                setFormations(formations);
+                console.log("formations", formations);
             })
-    }, []);
+    }, [unitTypes]);
+
+    const getUnitSprite = (props: { unit: Unit }) => {
+        const unit = props.unit;
+
+        return (
+            <Sprite
+                image={unit.image}
+                x={unit.position.x} y={unit.position.y}
+                anchor={0.5}
+                interactive
+                buttonMode
+                pointerdown={onDragStart}
+                pointerup={onDragEnd}
+                pointerupoutside={onDragEnd}
+                pointermove={onDragMove}
+            />
+        )
+    }
 
     // display all the formations
     return (
@@ -93,17 +132,7 @@ export default function Formations(props: { unitTypes: UnitType[] }) {
             <Stage width={stageSize.width} height={stageSize.height} options={{
                 backgroundColor: 0x4287f5,
             }}>
-                <Sprite
-                    image={test}
-                    x={100} y={100}
-                    anchor={0.5}
-                    interactive
-                    buttonMode
-                    pointerdown={onDragStart}
-                    pointerup={onDragEnd}
-                    pointerupoutside={onDragEnd}
-                    pointermove={onDragMove}
-                />
+
             </Stage>
         </>
     )

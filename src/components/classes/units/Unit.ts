@@ -1,9 +1,15 @@
 import UnitTypes from "../UnitTypes";
 import Position from "../utils/Position";
 
+export enum Side {
+    FRIENDLY,
+    ENEMY,
+    NEUTRAL
+}
+
 export default class Unit {
     private _id: number;
-    private _side: string;
+    private _side: Side;
     private _type: UnitTypes;
     private _name: string;
     private _level: number;
@@ -11,13 +17,13 @@ export default class Unit {
     private _health: number;
     private _image: string;
 
-    constructor(id: number, side: string, type: UnitTypes, name: string, level: number, position: Position, image: string, scaleAttributes: Function) {
-        this._id = id;
-        this._side = side;
+    constructor(name: string, level: number, image: string, type: UnitTypes, scaleAttributes: Function, id?: number, side?: Side, position?: Position) {
+        this._id = id || -1;
+        this._side = side || Side.NEUTRAL;
         this._type = type;
         this._name = name;
         this._level = level;
-        this._position = position;
+        this._position = position || new Position(0, 0);
         this._health = scaleAttributes(level);
         this._image = image;
     }
@@ -30,11 +36,11 @@ export default class Unit {
         this._id = value;
     }
 
-    get side(): string {
+    get side(): Side {
         return this._side;
     }
 
-    set side(value: string) {
+    set side(value: Side) {
         this._side = value;
     }
 

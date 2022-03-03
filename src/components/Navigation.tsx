@@ -11,6 +11,7 @@ import ProfileHeader from "./ProfileHeader";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
 import GetServerInfos from "./misc/GetServerInfos";
+import UnitTypes from "./classes/UnitTypes";
 
 interface userInfos {
     username: string,
@@ -19,18 +20,12 @@ interface userInfos {
     maxAmountUnits: number,
 }
 
-export interface UnitType {
-    name: string;
-    defaultName: string;
-    customNamesAllowed: boolean;
-}
-
 export default function Navigation() {
     const [user, setUser] = React.useState<User>(new User(-1, "undefined", false, -1, -1));
 
     const [loading, setLoading] = useState(true);
 
-    const [unitTypes, setUnitTypes] = useState<UnitType[]>([]);
+    const [unitTypes, setUnitTypes] = useState<UnitTypes[]>([]);
 
     // checks if the user is logged in
     useEffect(() => {
@@ -81,7 +76,11 @@ export default function Navigation() {
                         .then(r => {
                             if (r.length === 0) {
                             } else {
-                                setUnitTypes(r);
+                                let newUnitTypes: UnitTypes[] = [];
+                                for (let type of r) {
+                                    newUnitTypes.push(new UnitTypes(type.customNamesAllowed, type.name, type.defaultName));
+                                }
+                                setUnitTypes(newUnitTypes);
                             }
                             setLoading(false);
                         })
@@ -100,7 +99,7 @@ export default function Navigation() {
     );
 }
 
-function NavigationCaller(props: { user: User, unitTypes: UnitType[] }) {
+function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
     const user = props.user;
     const unitTypes = props.unitTypes;
 

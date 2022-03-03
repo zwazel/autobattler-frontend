@@ -1,7 +1,7 @@
 import User from "./classes/User";
 import {useEffect, useState} from "react";
 import Loader from "./Loader";
-import {UnitType} from "./Navigation";
+import UnitTypes from "./classes/UnitTypes";
 
 interface Units {
     units: UnitInterface[];
@@ -16,17 +16,13 @@ interface UnitInterface {
     dateCollected: Date;
 }
 
-export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
+export default function Profile(props: { user: User, unitTypes: UnitTypes[] }) {
     const user = props.user;
     const unitTypes = props.unitTypes;
     const [units, setUnits] = useState<Units>({units: []});
     const [loaded, setLoaded] = useState(false);
-    const [newUnitName, setNewUnitName] = useState((unitTypes.length > 0) ? unitTypes[0].name : "");
-    const [newUnitType, setNewUnitType] = useState<UnitType>((unitTypes.length > 0) ? unitTypes[0] : {
-        name: "undefined",
-        defaultName: "undefined",
-        customNamesAllowed: false,
-    });
+    const [newUnitName, setNewUnitName] = useState((unitTypes.length > 0) ? unitTypes[0].typeName : "");
+    const [newUnitType, setNewUnitType] = useState<UnitTypes>((unitTypes.length > 0) ? unitTypes[0] : new UnitTypes(false, "undefined", "undefined"));
     const [newUnitLevel, setNewUnitLevel] = useState(1);
 
     const [messagesEnd, setMessagesEnd] = useState<HTMLDivElement | null>(null);
@@ -161,8 +157,8 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                 <td>
                                     <select onChange={e => setNewUnitType(unitTypes[+e.target.value])}>
                                         {unitTypes.map(type => {
-                                            return <option key={type.name}
-                                                           value={unitTypes.indexOf(type)}>{type.name}</option>
+                                            return <option key={type.typeName}
+                                                           value={unitTypes.indexOf(type)}>{type.typeName}</option>
                                         })}
                                     </select>
                                 </td>
@@ -172,7 +168,7 @@ export default function Profile(props: { user: User, unitTypes: UnitType[] }) {
                                         const data = {
                                             name: newUnitName,
                                             level: newUnitLevel,
-                                            unitType: newUnitType.name,
+                                            unitType: newUnitType.typeName,
                                         };
 
                                         const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addUnit`, {
