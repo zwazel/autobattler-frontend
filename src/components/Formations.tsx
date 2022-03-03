@@ -13,11 +13,7 @@ import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 
 interface Formation {
     id: number;
-    units: UnitFormation[];
-}
-
-interface UnitFormation {
-    unit: Unit;
+    units: Unit[];
 }
 
 enum Mode {
@@ -28,6 +24,7 @@ enum Mode {
 
 export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
+    const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [loaded, setLoaded] = useState<boolean>(false);
     const [done, setDone] = useState<boolean>(false);
     const [units, setUnits] = useState<Unit[]>([]);
@@ -49,6 +46,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
         setStageSize(newStageSize);
         setGridCellSize(gridCellSize);
+        setGridSize(gridSize);
         setDone(true);
     };
 
@@ -104,7 +102,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     }
                                     const formation: Formation = {
                                         id: formationID,
-                                        units: unitsInFormation.map(unit => ({unit}))
+                                        units: unitsInFormation,
                                     };
                                     formations.push(formation);
                                 }
@@ -113,7 +111,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                 setLoaded(true);
                             })
                     });
-                ;
             })
     }, [unitTypes]);
 
@@ -128,7 +125,28 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         )
     }
 
-    // todo - when editing / creating a formation, show all units that haven't been placed yet
+    const findFreeSpace = (): Position => {
+        const posToCheck = new Position(1, 1);
+        if (isPositionFree(posToCheck)) {
+            return posToCheck;
+        }
+
+        for (let x = 1; x < gridSize.x; x++) {
+            for (let y = 1; y < gridSize.y; y++) {
+                posToCheck.x = x;
+                posToCheck.y = y;
+                if (isPositionFree(posToCheck)) {
+                    return posToCheck;
+                }
+            }
+        }
+        return new Position(-1, -1);
+    }
+
+    const isPositionFree = (position: Position): boolean => {
+        return true;
+    }
+
     return (
         <>
             <h1>Formations</h1>
@@ -163,7 +181,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     {units.map(unit => (
                                         <button key={unit.id} onClick={() => {
                                             if (selectedFormation) {
-                                                selectedFormation.units.push({unit});
+                                                selectedFormation.units.push(unit);
                                                 setSelectedFormation(selectedFormation);
                                             }
                                         }}>
@@ -172,7 +190,24 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     ))}
                                 </div>
                             ) : (
-                                <p>{mode}</p>
+                                <div>
+                                    <p>{mode}</p>
+                                    {units.map(unit => (
+                                        <>
+                                            {selectedFormation && !selectedFormation.units.find(u => u.id === unit.id) ? (
+                                                <button key={unit.id} onClick={() => {
+                                                    selectedFormation.units.push(unit);
+                                                    setSelectedFormation(selectedFormation);
+                                                    console.log("addedUnitToFormation", unit);
+                                                }}>
+                                                    <p>{unit.name}</p>
+                                                </button>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </>
+                                    ))}
+                                </div>
                             )}
                         </>
                     ) : (
@@ -198,7 +233,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     <Container>
                                         <Container key={selectedFormation.id}>
                                             {selectedFormation.units.map(unit => (
-                                                getUnitSprite({unit: unit.unit})
+                                                getUnitSprite({unit: unit})
                                             ))}
                                         </Container>
                                     </Container>
