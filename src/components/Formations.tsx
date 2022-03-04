@@ -195,12 +195,13 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     {units.map(unit => (
                                         <>
                                             {selectedFormation && !selectedFormation.units.find(u => u.id === unit.id) ? (
-                                                <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
-                                                    unit.position = findFreeSpace();
-                                                    selectedFormation.units.push(unit);
-                                                    setSelectedFormation(selectedFormation);
-                                                    console.log("addedUnitToFormation", unit);
-                                                }}>
+                                                <button key={unit.type.typeName + "-" + unit.id}
+                                                        onClick={() => {
+                                                            unit.position = findFreeSpace();
+                                                            selectedFormation.units.push(unit);
+                                                            setSelectedFormation(selectedFormation);
+                                                            console.log("addedUnitToFormation", unit);
+                                                        }}>
                                                     <p>{unit.name}</p>
                                                 </button>
                                             ) : (
