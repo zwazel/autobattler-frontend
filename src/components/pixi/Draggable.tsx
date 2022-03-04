@@ -1,5 +1,5 @@
 import React from "react";
-import {Sprite} from "@inlet/react-pixi";
+import {Sprite, Text} from "@inlet/react-pixi";
 import PIXI from "pixi.js";
 import Position from "../classes/utils/Position";
 import Unit from "../classes/units/Unit";
@@ -98,7 +98,19 @@ const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: 
             pointerup={onDragEnd}
             pointerupoutside={onDragEnd}
             pointermove={onDragMove}
-        />
+        >
+            <Text
+                text={unit.name}
+                x={0}
+                y={0}
+                style={{
+                    fontFamily: "Arial",
+                    fontSize: 12,
+                    fill: "white",
+                    align: "center",
+                }}
+            />
+        </Sprite>
     );
 };
 
