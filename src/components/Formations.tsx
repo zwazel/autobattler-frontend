@@ -11,6 +11,7 @@ import Draggable from "./pixi/Draggable";
 import Grid from "./pixi/Grid";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import IsPositionFree from "./utils/IsPositionFree";
+import ParseUnitType from "./classes/utils/ParseUnitType";
 
 export interface Formation {
     id: number;
@@ -92,8 +93,9 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                         if (unitType) {
                                             const unit = units.find(unit => unit.id === unitJson.id);
                                             if (unit) {
-                                                unit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
-                                                unitsInFormation.push(unit);
+                                                const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id);
+                                                newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
+                                                unitsInFormation.push(newUnit);
                                             } else {
                                                 throw new Error("unit not found");
                                             }
@@ -149,12 +151,11 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                 unit.position = findFreeSpace();
 
                 if (unit.position.x !== -1 && unit.position.y !== -1) {
-                    const units = selectedFormation.units;
-                    units.push(unit);
-
+                    let tempState = [...selectedFormation.units];
+                    tempState.push(unit);
                     setSelectedFormation({
                         ...selectedFormation,
-                        units: units,
+                        units: tempState,
                     });
                 } else {
                     alert("No free space left!");
@@ -205,7 +206,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         console.log("todo update formation");
     }
 
-    function DeleteFormation() {
+    function deleteFormation() {
         if (selectedFormation) {
             if (selectedFormation.id !== -1) {
                 console.log("todo: delete formation");
@@ -243,7 +244,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             console.log(formations)
                             const newFormation = formations.find(f => f.id === -1);
                             if (newFormation) {
-                                if(!selectedFormation || selectedFormation.id !== newFormation.id) {
+                                if (!selectedFormation || selectedFormation.id !== newFormation.id) {
                                     setSelectedFormation(newFormation);
                                 }
                             } else {
@@ -273,6 +274,11 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
                                     <button onClick={() => {
                                         setMode(Mode.IDLE);
+
+                                        if (selectedFormation && selectedFormation.id === -1) {
+                                            formations.splice(formations.indexOf(selectedFormation), 1);
+                                        }
+
                                         setSelectedFormation(null);
                                     }}>
                                         <p>Cancel</p>
@@ -280,7 +286,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
                                     {selectedFormation.id !== -1 ? (
                                         <button onClick={() => {
-                                            DeleteFormation();
+                                            deleteFormation();
                                         }}>
                                             <p>Delete</p>
                                         </button>
