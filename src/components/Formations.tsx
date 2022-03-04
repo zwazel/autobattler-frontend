@@ -199,7 +199,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     }
 
     function saveFormation(formation: Formation) {
-        if(formation.units.length > 0) {
+        if (formation.units.length > 0) {
             console.log("todo save formation", formation);
 
             const unitData = [];
@@ -209,8 +209,8 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     id: unit.id,
                     priority: priorityCounter++, // todo: PRIORITY
                     position: {
-                        x: unit.position.x-1,
-                        y: unit.position.y-1,
+                        x: unit.position.x - 1,
+                        y: unit.position.y - 1,
                     },
                 });
             }
