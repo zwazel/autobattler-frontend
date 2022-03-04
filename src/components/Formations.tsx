@@ -302,7 +302,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             if (selectedFormation.id !== -1) {
                 confirmAlert({
                     title: 'Confirm to delete',
-                    message: 'Are you sure to delete this formation?',
+                    message: 'Are you sure you want to delete this formation?',
                     buttons: [
                         {
                             label: 'Yes',
