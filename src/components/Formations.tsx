@@ -12,7 +12,7 @@ import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import IsPositionFree from "./utils/IsPositionFree";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import {confirmAlert} from 'react-confirm-alert';
-import 'react-confirm-alert/src/react-confirm-alert.css';
+import '../assets/css/confirm-alert.css'
 
 export interface Formation {
     id: number;
