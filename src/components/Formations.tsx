@@ -182,6 +182,36 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         )
     }
 
+    function SaveOrUpdateFormation() {
+        if (selectedFormation) {
+            if (selectedFormation.id === -1) {
+                saveFormation(selectedFormation);
+            } else {
+                updateFormation(selectedFormation);
+            }
+        } else {
+            throw new Error("selectedFormation is undefined");
+        }
+    }
+
+    function saveFormation(formation: Formation) {
+        console.log("todo save formation");
+    }
+
+    function updateFormation(formation: Formation) {
+        console.log("todo update formation");
+    }
+
+    function DeleteFormation() {
+        if (selectedFormation) {
+            if (selectedFormation.id !== -1) {
+                console.log("todo: delete formation");
+            }
+        } else {
+            throw new Error("selectedFormation is undefined");
+        }
+    }
+
     return (
         <>
             <h1>Formations</h1>
@@ -228,6 +258,13 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                 <div>
                                     <FormationUnitManagement selectedFormation={selectedFormation} mode={mode}
                                                              units={units}/>
+
+                                    <button onClick={() => {
+                                        SaveOrUpdateFormation();
+                                    }}>
+                                        <p>{selectedFormation.id === -1 ? "Save" : "Update"}</p>
+                                    </button>
+
                                     <button onClick={() => {
                                         setMode(Mode.IDLE);
                                         setSelectedFormation(null);
@@ -235,11 +272,15 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                         <p>Cancel</p>
                                     </button>
 
-                                    <button onClick={() => {
-                                        console.log(selectedFormation);
-                                    }}>
-                                        <p>Save</p>
-                                    </button>
+                                    {selectedFormation.id !== -1 ? (
+                                        <button onClick={() => {
+                                            DeleteFormation();
+                                        }}>
+                                            <p>Delete</p>
+                                        </button>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </div>
                             ) : (
                                 <p>No formation selected</p>
