@@ -199,7 +199,47 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     }
 
     function saveFormation(formation: Formation) {
-        console.log("todo save formation", formation);
+        if(formation.units.length > 0) {
+            console.log("todo save formation", formation);
+
+            const unitData = [];
+            let priorityCounter = 1;
+            for (let unit of formation.units) {
+                unitData.push({
+                    id: unit.id,
+                    priority: priorityCounter++, // todo: PRIORITY
+                    position: {
+                        x: unit.position.x-1,
+                        y: unit.position.y-1,
+                    },
+                });
+            }
+
+            const data = {
+                units: unitData
+            }
+
+            fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addFormation`, {
+                method: "POST",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            }).then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    throw new Error("Failed to save formation");
+                }
+            }).then(data => {
+                console.log("saved formation", data);
+                setSelectedFormation(null);
+            })
+        } else {
+            alert("No units in formation!");
+        }
     }
 
     function updateFormation(formation: Formation) {
