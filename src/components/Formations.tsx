@@ -256,7 +256,30 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     function deleteFormation() {
         if (selectedFormation) {
             if (selectedFormation.id !== -1) {
-                console.log("todo: delete formation", selectedFormation);
+                const data = {
+                    formationID: selectedFormation.id
+                }
+
+                fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/deleteFormation`, {
+                    method: "POST",
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    if (response.ok) {
+                        console.log("Formation deleted!");
+
+                        const newFormations = formations.filter(f => f.id !== selectedFormation.id);
+                        setFormations(newFormations);
+
+                        setSelectedFormation(null);
+                    } else {
+                        throw new Error("Failed to delete formation");
+                    }
+                })
             }
         } else {
             throw new Error("selectedFormation is undefined");
