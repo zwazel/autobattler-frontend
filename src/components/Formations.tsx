@@ -234,7 +234,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                 body: JSON.stringify(data)
             }).then(response => {
                 if (response.ok) {
-                    console.log("Formation saved!");
                     setSelectedFormation(null);
                     return response.json();
                 } else {
@@ -270,8 +269,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     body: JSON.stringify(data)
                 }).then(response => {
                     if (response.ok) {
-                        console.log("Formation deleted!");
-
                         const newFormations = formations.filter(f => f.id !== selectedFormation.id);
                         setFormations(newFormations);
 
