@@ -2,6 +2,8 @@ import React from "react";
 import {Sprite} from "@inlet/react-pixi";
 import PIXI from "pixi.js";
 import Position from "../classes/utils/Position";
+import Unit from "../classes/units/Unit";
+import IsPositionFree from "../utils/IsPositionFree";
 
 interface PixiDraggable extends PIXI.DisplayObject {
     data: PIXI.InteractionData | null;
@@ -9,20 +11,41 @@ interface PixiDraggable extends PIXI.DisplayObject {
 }
 
 interface Props {
-    image: string;
-    x: number;
-    y: number;
     stageSize: Position;
     gridCellSize: number;
     alignToGrid: boolean;
+    allOtherUnits: Unit[];
+    unit: Unit
 }
 
-const Draggable = ({image, x, y, stageSize, gridCellSize, alignToGrid}: Props) => {
+const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: Props) => {
+    const scalePosition = (position: Position, downScale: boolean) => {
+        if (downScale) {
+            return new Position(
+                (position.x + gridCellSize / 2) / gridCellSize,
+                (position.y + gridCellSize / 2) / gridCellSize
+            );
+        } else {
+            return new Position(
+                (position.x * gridCellSize) - gridCellSize / 2,
+                (position.y * gridCellSize) - gridCellSize / 2,
+            );
+        }
+    };
+
+    const image = unit.image;
+    const upscaledPos = scalePosition(unit.position, false);
+    let x = upscaledPos.x;
+    let y = upscaledPos.y;
+
+    const [success, setSuccess] = React.useState(false);
+
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as PixiDraggable;
         sprite.alpha = 0.5;
         sprite.data = event.data;
         sprite.dragging = true;
+        setSuccess(false);
     };
 
     const onDragEnd = (event: PIXI.InteractionEvent) => {
@@ -30,6 +53,10 @@ const Draggable = ({image, x, y, stageSize, gridCellSize, alignToGrid}: Props) =
         sprite.alpha = 1;
         sprite.dragging = false;
         sprite.data = null;
+
+        if (success) {
+
+        }
     };
 
     const onDragMove = (event: PIXI.InteractionEvent) => {
@@ -50,11 +77,22 @@ const Draggable = ({image, x, y, stageSize, gridCellSize, alignToGrid}: Props) =
                 if (newPosition.y >= (stageSize.y)) {
                     newPosition.y = (stageSize.y - gridCellSize / 2);
                 }
-                sprite.x = Math.floor(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
-                sprite.y = Math.floor(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
+
+                x = Math.floor(newPosition.x / gridCellSize) * gridCellSize + (gridCellSize / 2);
+                y = Math.floor(newPosition.y / gridCellSize) * gridCellSize + (gridCellSize / 2);
+                const downScaledPos = scalePosition(new Position(x, y), true);
+                if (IsPositionFree(allOtherUnits, downScaledPos)) {
+                    unit.position = downScaledPos;
+                    sprite.x = x;
+                    sprite.y = y;
+                    setSuccess(true);
+                } else {
+                    setSuccess(false);
+                }
             } else {
                 sprite.x = newPosition.x;
                 sprite.y = newPosition.y;
+                setSuccess(true);
             }
         }
     };

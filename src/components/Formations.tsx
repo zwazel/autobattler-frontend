@@ -10,6 +10,7 @@ import Rectangle from "./graphics/Rectangle";
 import Draggable from "./pixi/Draggable";
 import Grid from "./pixi/Grid";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
+import IsPositionFree from "./utils/IsPositionFree";
 
 export interface Formation {
     id: number;
@@ -114,46 +115,47 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     }, [unitTypes]);
 
     const getUnitSprite = (props: { unit: Unit }) => {
-        const unit = props.unit;
+        if (selectedFormation) {
+            const unit = props.unit;
 
-        return (
-            <Draggable key={unit.type.typeName + "-" + unit.id} image={unit.image}
-                       x={(unit.position.x * gridCellSize) - gridCellSize / 2}
-                       y={(unit.position.y * gridCellSize) - gridCellSize / 2}
-                       gridCellSize={gridCellSize} stageSize={stageSize} alignToGrid={true}/>
-        )
+            return (
+                <Draggable key={unit.type.typeName + "-" + unit.id} unit={unit}
+                           gridCellSize={gridCellSize} stageSize={stageSize} alignToGrid={true}
+                           allOtherUnits={selectedFormation.units}
+                />
+            )
+        } else {
+            return (<></>);
+        }
     }
 
     const findFreeSpace = (): Position => {
-        const posToCheck = new Position(1, 1);
-        if (isPositionFree(posToCheck)) {
-            return posToCheck;
-        }
-
-        for (let x = 1; x < gridSize.x; x++) {
-            for (let y = 1; y < gridSize.y; y++) {
-                posToCheck.x = x;
-                posToCheck.y = y;
-                if (isPositionFree(posToCheck)) {
-                    return posToCheck;
+        if (selectedFormation) {
+            for (let x = 1; x < gridSize.x; x++) {
+                for (let y = 1; y < gridSize.y; y++) {
+                    const posToCheck = new Position(x, y);
+                    if (IsPositionFree(selectedFormation.units, posToCheck)) {
+                        return posToCheck;
+                    }
                 }
             }
         }
         return new Position(-1, -1);
     }
 
-    const isPositionFree = (position: Position): boolean => {
-        return true;
-    }
-
     const addUnitToSelectedFormation = (unit: Unit) => {
         if (selectedFormation) {
             if (!selectedFormation.units.find(u => u.id === unit.id)) {
                 unit.position = findFreeSpace();
-                setSelectedFormation({
-                    ...selectedFormation,
-                    units: [...selectedFormation.units, unit],
-                });
+
+                if (unit.position.x !== -1 && unit.position.y !== -1) {
+                    setSelectedFormation({
+                        ...selectedFormation,
+                        units: [...selectedFormation.units, unit],
+                    });
+                } else {
+                    alert("No free space left!");
+                }
             }
         } else {
             throw new Error("selectedFormation is undefined");
