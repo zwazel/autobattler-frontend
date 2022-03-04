@@ -92,7 +92,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                         if (unitType) {
                                             const unit = units.find(unit => unit.id === unitJson.id);
                                             if (unit) {
-                                                unit.position = new Position(unitJson.position.x, unitJson.position.y);
+                                                unit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                                                 unitsInFormation.push(unit);
                                             } else {
                                                 throw new Error("unit not found");
@@ -233,6 +233,12 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                         setSelectedFormation(null);
                                     }}>
                                         <p>Cancel</p>
+                                    </button>
+
+                                    <button onClick={() => {
+                                        console.log(selectedFormation);
+                                    }}>
+                                        <p>Save</p>
                                     </button>
                                 </div>
                             ) : (
