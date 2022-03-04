@@ -309,7 +309,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     {formations.length > 0 ? (
                         <></>
                     ) : (
-                        <p>You don't seem to have an formations, go ahead and create your first!</p>
+                        <p>You don't seem to have any formations, go ahead and create your first!</p>
                     )}
                     <div className="formations">
                         {formations
