@@ -200,8 +200,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
     function saveFormation(formation: Formation) {
         if (formation.units.length > 0) {
-            console.log("todo save formation", formation);
-
             const unitData = [];
             let priorityCounter = 1;
             for (let unit of formation.units) {
@@ -228,14 +226,15 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                 credentials: 'include',
                 body: JSON.stringify(data)
             }).then(response => {
-                if (response.status === 200) {
-                    return response.json();
+                if (response.ok) {
+                    console.log("Formation saved!");
+
+
+
+                    setSelectedFormation(null);
                 } else {
                     throw new Error("Failed to save formation");
                 }
-            }).then(data => {
-                console.log("saved formation", data);
-                setSelectedFormation(null);
             })
         } else {
             alert("No units in formation!");
@@ -281,7 +280,6 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             ))}
                         <button onClick={() => {
                             setMode(Mode.ADD);
-                            console.log(formations)
                             const newFormation = formations.find(f => f.id === -1);
                             if (newFormation) {
                                 if (!selectedFormation || selectedFormation.id !== newFormation.id) {
