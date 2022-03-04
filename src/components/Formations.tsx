@@ -196,8 +196,8 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             .filter(formation => formation.id !== -1)
                             .map(formation => (
                                 <button key={formation.id} onClick={() => {
-                                    if (selectedFormation && selectedFormation.id !== formation.id) {
-                                        setMode(Mode.EDIT);
+                                    setMode(Mode.EDIT);
+                                    if (!selectedFormation || selectedFormation.id !== formation.id) {
                                         setSelectedFormation(formation);
                                     }
                                 }}>
@@ -225,8 +225,8 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                         <>
                             {selectedFormation ? (
                                 <div>
-                                    <h2>{selectedFormation.id}</h2>
-                                    <FormationUnitManagement selectedFormation={selectedFormation} mode={mode} units={units}/>
+                                    <FormationUnitManagement selectedFormation={selectedFormation} mode={mode}
+                                                             units={units}/>
                                     <button onClick={() => {
                                         setMode(Mode.IDLE);
                                         setSelectedFormation(null);
