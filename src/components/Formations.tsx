@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Container, Stage} from '@inlet/react-pixi'
 // import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
 import UnitTypes from "./classes/UnitTypes";
@@ -35,6 +35,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     const [stageSize, setStageSize] = useState<Position>(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
     const [gridCellSize, setGridCellSize] = useState<number>(64);
     const [mode, setMode] = useState<Mode>(Mode.IDLE);
+    const formationIDCounter = useRef<number>(0);
 
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
@@ -51,6 +52,33 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         setGridSize(gridSize);
         setDone(true);
     };
+
+    const getFormationFromJson = useCallback((json: any, units: Unit[]) => {
+        const formationID = (json.id <= 0) ? formationIDCounter.current : json.id;
+        formationIDCounter.current = formationID + 1;
+        const jsonFormation = JSON.parse(json.formationJson);
+        const unitsInFormation: Unit[] = [];
+        for (let unitJson of jsonFormation) {
+            const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.type);
+            if (unitType) {
+                const unit = units.find(unit => unit.id === unitJson.id);
+                if (unit) {
+                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                    newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
+                    unitsInFormation.push(newUnit);
+                } else {
+                    throw new Error("unit not found");
+                }
+            } else {
+                throw new Error("UnitType not found");
+            }
+        }
+        const formation: Formation = {
+            id: formationID,
+            units: unitsInFormation,
+        };
+        return formation;
+    }, [unitTypes]);
 
     useEffect(() => {
         fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getGridSize/user`, {
@@ -85,28 +113,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             .then(data => {
                                 const formations: Formation[] = [];
                                 for (let json of data) {
-                                    const formationID = json.id;
-                                    const jsonFormation = JSON.parse(json.formationJson);
-                                    const unitsInFormation: Unit[] = [];
-                                    for (let unitJson of jsonFormation) {
-                                        const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.type);
-                                        if (unitType) {
-                                            const unit = units.find(unit => unit.id === unitJson.id);
-                                            if (unit) {
-                                                const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
-                                                newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
-                                                unitsInFormation.push(newUnit);
-                                            } else {
-                                                throw new Error("unit not found");
-                                            }
-                                        } else {
-                                            throw new Error("UnitType not found");
-                                        }
-                                    }
-                                    const formation: Formation = {
-                                        id: formationID,
-                                        units: unitsInFormation,
-                                    };
+                                    const formation = getFormationFromJson(json, units);
                                     formations.push(formation);
                                 }
                                 setFormations(formations);
@@ -114,7 +121,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             })
                     });
             })
-    }, [unitTypes]);
+    }, [getFormationFromJson, unitTypes]);
 
     const getUnitSprite = (props: { unit: Unit }) => {
         if (selectedFormation) {
@@ -228,13 +235,14 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
             }).then(response => {
                 if (response.ok) {
                     console.log("Formation saved!");
-
-
-
                     setSelectedFormation(null);
+                    return response.json();
                 } else {
                     throw new Error("Failed to save formation");
                 }
+            }).then(data => {
+                const formation = getFormationFromJson(data, units);
+                setFormations([...formations, formation]);
             })
         } else {
             alert("No units in formation!");
@@ -263,7 +271,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     {formations.length > 0 ? (
                         <></>
                     ) : (
-                        <p>You don't seem to have any formations, go ahead and create your first!</p>
+                        <p>You don't seem to have an formations, go ahead and create your first!</p>
                     )}
                     <div className="formations">
                         {formations
