@@ -149,9 +149,12 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                 unit.position = findFreeSpace();
 
                 if (unit.position.x !== -1 && unit.position.y !== -1) {
+                    const units = selectedFormation.units;
+                    units.push(unit);
+
                     setSelectedFormation({
                         ...selectedFormation,
-                        units: [...selectedFormation.units, unit],
+                        units: units,
                     });
                 } else {
                     alert("No free space left!");
@@ -237,9 +240,12 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             ))}
                         <button onClick={() => {
                             setMode(Mode.ADD);
+                            console.log(formations)
                             const newFormation = formations.find(f => f.id === -1);
                             if (newFormation) {
-                                setSelectedFormation(newFormation);
+                                if(!selectedFormation || selectedFormation.id !== newFormation.id) {
+                                    setSelectedFormation(newFormation);
+                                }
                             } else {
                                 const newFormation = {
                                     id: -1,
