@@ -290,6 +290,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                 const newFormations = [...formations];
                 newFormations[newFormations.indexOf(formation)] = formation;
                 setFormations(newFormations);
+                setSelectedFormation(formation);
             })
         } else {
             alert("No units in formation!");
