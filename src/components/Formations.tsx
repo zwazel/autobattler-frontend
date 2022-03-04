@@ -11,12 +11,12 @@ import Draggable from "./pixi/Draggable";
 import Grid from "./pixi/Grid";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 
-interface Formation {
+export interface Formation {
     id: number;
     units: Unit[];
 }
 
-enum Mode {
+export enum Mode {
     ADD = 'ADD',
     EDIT = 'EDIT',
     IDLE = 'IDLE'
@@ -161,6 +161,26 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         }
     }
 
+    function FormationUnitManagement(props: { selectedFormation: Formation | null, mode: Mode, units: Unit[] }) {
+        const {selectedFormation, mode, units} = props;
+
+        return (
+            <div>
+                <p>{mode}</p>
+                {units.filter(unit => (
+                    selectedFormation && selectedFormation.units.find(u => u.id === unit.id) === undefined
+                ))
+                    .map(unit => (
+                        <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
+                            addUnitToSelectedFormation(unit);
+                        }}>
+                            <p>{unit.name}</p>
+                        </button>
+                    ))}
+            </div>
+        )
+    }
+
     return (
         <>
             <h1>Formations</h1>
@@ -203,38 +223,19 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                     </div>
                     {mode !== Mode.IDLE ? (
                         <>
-                            {(mode === Mode.ADD) ? (
+                            {selectedFormation ? (
                                 <div>
-                                    <p>{mode}</p>
-                                    {units
-                                        .filter(unit => (
-                                            selectedFormation && selectedFormation.units.find(u => u.id === unit.id) === undefined
-                                        ))
-                                        .map(unit => (
-                                            <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
-                                                addUnitToSelectedFormation(unit);
-                                            }}>
-                                                <p>{unit.name}</p>
-                                            </button>
-                                        ))}
+                                    <h2>{selectedFormation.id}</h2>
+                                    <FormationUnitManagement selectedFormation={selectedFormation} mode={mode} units={units}/>
+                                    <button onClick={() => {
+                                        setMode(Mode.IDLE);
+                                        setSelectedFormation(null);
+                                    }}>
+                                        <p>Cancel</p>
+                                    </button>
                                 </div>
                             ) : (
-                                <div>
-                                    <p>{mode}</p>
-
-
-                                    {units.filter(unit => ( // filter out all units already in the formation!
-                                        selectedFormation && selectedFormation.units.find(u => u.id === unit.id) === undefined
-                                    )).map(unit => (
-                                            <button key={unit.type.typeName + "-" + unit.id}
-                                                    onClick={() => {
-                                                        addUnitToSelectedFormation(unit);
-                                                    }}>
-                                                <p>{unit.name}</p>
-                                            </button>
-                                        )
-                                    )}
-                                </div>
+                                <p>No formation selected</p>
                             )}
                         </>
                     ) : (
