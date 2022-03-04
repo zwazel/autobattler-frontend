@@ -38,14 +38,11 @@ const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: 
     let x = upscaledPos.x;
     let y = upscaledPos.y;
 
-    const [success, setSuccess] = React.useState(false);
-
     const onDragStart = (event: PIXI.InteractionEvent) => {
         const sprite = event.currentTarget as PixiDraggable;
         sprite.alpha = 0.5;
         sprite.data = event.data;
         sprite.dragging = true;
-        setSuccess(false);
     };
 
     const onDragEnd = (event: PIXI.InteractionEvent) => {
@@ -53,10 +50,6 @@ const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: 
         sprite.alpha = 1;
         sprite.dragging = false;
         sprite.data = null;
-
-        if (success) {
-
-        }
     };
 
     const onDragMove = (event: PIXI.InteractionEvent) => {
@@ -85,14 +78,10 @@ const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: 
                     unit.position = downScaledPos;
                     sprite.x = x;
                     sprite.y = y;
-                    setSuccess(true);
-                } else {
-                    setSuccess(false);
                 }
             } else {
                 sprite.x = newPosition.x;
                 sprite.y = newPosition.y;
-                setSuccess(true);
             }
         }
     };
