@@ -172,20 +172,31 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                         <p>You don't seem to have any formations, go ahead and create your first!</p>
                     )}
                     <div className="formations">
-                        {formations.map(formation => (
-                            <button key={formation.id} onClick={() => {
-                                setMode(Mode.EDIT);
-                                setSelectedFormation(formation);
-                            }}>
-                                <p>{formation.id}</p>
-                            </button>
-                        ))}
+                        {formations
+                            .filter(formation => formation.id !== -1)
+                            .map(formation => (
+                                <button key={formation.id} onClick={() => {
+                                    if (selectedFormation && selectedFormation.id !== formation.id) {
+                                        setMode(Mode.EDIT);
+                                        setSelectedFormation(formation);
+                                    }
+                                }}>
+                                    <p>{formation.id}</p>
+                                </button>
+                            ))}
                         <button onClick={() => {
                             setMode(Mode.ADD);
-                            setSelectedFormation({
-                                id: -1,
-                                units: [],
-                            });
+                            const newFormation = formations.find(f => f.id === -1);
+                            if (newFormation) {
+                                setSelectedFormation(newFormation);
+                            } else {
+                                const newFormation = {
+                                    id: -1,
+                                    units: [],
+                                };
+                                formations.push(newFormation);
+                                setSelectedFormation(newFormation);
+                            }
                         }}>
                             <p>New</p>
                         </button>
@@ -195,20 +206,24 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                             {(mode === Mode.ADD) ? (
                                 <div>
                                     <p>{mode}</p>
-                                    {units.map(unit => (
-                                        <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
-                                            addUnitToSelectedFormation(unit);
-                                        }}>
-                                            <p>{unit.name}</p>
-                                        </button>
-                                    ))}
+                                    {units
+                                        .filter(unit => (
+                                            selectedFormation && selectedFormation.units.find(u => u.id === unit.id) === undefined
+                                        ))
+                                        .map(unit => (
+                                            <button key={unit.type.typeName + "-" + unit.id} onClick={() => {
+                                                addUnitToSelectedFormation(unit);
+                                            }}>
+                                                <p>{unit.name}</p>
+                                            </button>
+                                        ))}
                                 </div>
                             ) : (
                                 <div>
                                     <p>{mode}</p>
 
 
-                                    {units.filter(unit => (
+                                    {units.filter(unit => ( // filter out all units already in the formation!
                                         selectedFormation && selectedFormation.units.find(u => u.id === unit.id) === undefined
                                     )).map(unit => (
                                             <button key={unit.type.typeName + "-" + unit.id}
