@@ -150,11 +150,10 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
         if (selectedFormation) {
             if (!selectedFormation.units.find(u => u.id === unit.id)) {
                 unit.position = findFreeSpace();
-                selectedFormation.units.push(unit);
-                setSelectedFormation(selectedFormation);
-                console.log("addedUnitToFormation", unit);
-            } else {
-                console.log("alreadyInFormation", unit);
+                setSelectedFormation({
+                    ...selectedFormation,
+                    units: [...selectedFormation.units, unit],
+                });
             }
         } else {
             throw new Error("selectedFormation is undefined");
@@ -257,7 +256,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                     width={stageSize.x}
                                     height={stageSize.y}
                                 />
-                                {selectedFormation ? (
+                                {selectedFormation && mode !== Mode.IDLE ? (
                                     <Container>
                                         <Container key={selectedFormation.id}>
                                             {selectedFormation.units.map(unit => (
