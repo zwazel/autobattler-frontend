@@ -1,6 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Container, Stage} from '@inlet/react-pixi'
-// import myFirstUnitImage from '../assets/img/units/my_first_unit/goodSoupMobil.png'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
 import Unit from "./classes/units/Unit";
@@ -12,6 +11,8 @@ import Grid from "./pixi/Grid";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import IsPositionFree from "./utils/IsPositionFree";
 import ParseUnitType from "./classes/utils/ParseUnitType";
+import {confirmAlert} from 'react-confirm-alert';
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 export interface Formation {
     id: number;
@@ -255,27 +256,44 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     function deleteFormation() {
         if (selectedFormation) {
             if (selectedFormation.id !== -1) {
-                const data = {
-                    formationID: selectedFormation.id
-                }
+                confirmAlert({
+                    title: 'Confirm to delete',
+                    message: 'Are you sure to delete this formation?',
+                    buttons: [
+                        {
+                            label: 'Yes',
+                            onClick: () => {
+                                const data = {
+                                    formationID: selectedFormation.id
+                                }
 
-                fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/deleteFormation`, {
-                    method: "POST",
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    credentials: 'include',
-                    body: JSON.stringify(data)
-                }).then(response => {
-                    if (response.ok) {
-                        const newFormations = formations.filter(f => f.id !== selectedFormation.id);
-                        setFormations(newFormations);
+                                fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/deleteFormation`, {
+                                    method: "POST",
+                                    headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                    },
+                                    credentials: 'include',
+                                    body: JSON.stringify(data)
+                                }).then(response => {
+                                    if (response.ok) {
+                                        const newFormations = formations.filter(f => f.id !== selectedFormation.id);
+                                        setFormations(newFormations);
 
-                        setSelectedFormation(null);
-                    } else {
-                        throw new Error("Failed to delete formation");
-                    }
+                                        setSelectedFormation(null);
+                                    } else {
+                                        throw new Error("Failed to delete formation");
+                                    }
+                                })
+                            }
+                        },
+                        {
+                            label: 'No',
+                            onClick: () => {
+                                return;
+                            }
+                        }
+                    ]
                 })
             }
         } else {
