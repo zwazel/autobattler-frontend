@@ -52,7 +52,11 @@ export default function Signup() {
         if (response.ok) {
             window.location.reload();
         } else {
-            alert("Signup failed : " + response.status + " " + response.statusText + " " + JSON.stringify(response.body));
+            if (response.status === 409) {
+                alert("Username already exists");
+            } else {
+                alert("An unknown error occurred");
+            }
         }
     }
 
