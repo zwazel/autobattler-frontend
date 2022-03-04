@@ -93,7 +93,7 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
                                         if (unitType) {
                                             const unit = units.find(unit => unit.id === unitJson.id);
                                             if (unit) {
-                                                const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id);
+                                                const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
                                                 newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                                                 unitsInFormation.push(newUnit);
                                             } else {
@@ -199,17 +199,17 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
     }
 
     function saveFormation(formation: Formation) {
-        console.log("todo save formation");
+        console.log("todo save formation", formation);
     }
 
     function updateFormation(formation: Formation) {
-        console.log("todo update formation");
+        console.log("todo update formation", formation);
     }
 
     function deleteFormation() {
         if (selectedFormation) {
             if (selectedFormation.id !== -1) {
-                console.log("todo: delete formation");
+                console.log("todo: delete formation", selectedFormation);
             }
         } else {
             throw new Error("selectedFormation is undefined");
