@@ -39,6 +39,8 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     const [stageSize, setStageSize] = useState<Position>(new Position(window.innerWidth * 0.75, window.innerHeight * 0.5));
     const [gridCellSize, setGridCellSize] = useState<number>(64);
     const [mode, setMode] = useState<Mode>(Mode.IDLE);
+    const [amountFormations, setAmountFormations] = useState<number>(user.amountFormations);
+
     const formationIDCounter = useRef<number>(0);
 
     const scalePlayField = (gridSize: Position) => {
@@ -247,7 +249,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                 }).then(data => {
                     const formation = getFormationFromJson(data, units);
                     setFormations([...formations, formation]);
-                    user.amountFormations++;
+                    setAmountFormations(amountFormations + 1);
                 })
             } else {
                 alert("You can't have more than " + user.maxAmountFormations + " formations!");
@@ -334,7 +336,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
 
                                         setSelectedFormation(null);
 
-                                        user.amountFormations--;
+                                        setAmountFormations(amountFormations - 1);
                                     } else {
                                         throw new Error("Failed to delete formation");
                                     }
@@ -367,7 +369,8 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                     )}
 
                     <div>
-                        <h2>You can create new formations: {(user.amountFormations < user.maxAmountFormations) ? 'Yes' : 'No'}</h2>
+                        <h2>You can create new
+                            formations: {(amountFormations < user.maxAmountFormations) ? 'Yes' : 'No'}</h2>
                     </div>
 
                     <div className="formations">
@@ -383,24 +386,28 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                     <p>{formation.id}</p>
                                 </button>
                             ))}
-                        <button onClick={() => {
-                            setMode(Mode.ADD);
-                            const newFormation = formations.find(f => f.id === -1);
-                            if (newFormation) {
-                                if (!selectedFormation || selectedFormation.id !== newFormation.id) {
+                        {(amountFormations < user.maxAmountFormations) ? (
+                            <button onClick={() => {
+                                setMode(Mode.ADD);
+                                const newFormation = formations.find(f => f.id === -1);
+                                if (newFormation) {
+                                    if (!selectedFormation || selectedFormation.id !== newFormation.id) {
+                                        setSelectedFormation(newFormation);
+                                    }
+                                } else {
+                                    const newFormation = {
+                                        id: -1,
+                                        units: [],
+                                    };
+                                    formations.push(newFormation);
                                     setSelectedFormation(newFormation);
                                 }
-                            } else {
-                                const newFormation = {
-                                    id: -1,
-                                    units: [],
-                                };
-                                formations.push(newFormation);
-                                setSelectedFormation(newFormation);
-                            }
-                        }}>
-                            <p>New</p>
-                        </button>
+                            }}>
+                                <p>New</p>
+                            </button>
+                        ) : (
+                            <></>
+                        )}
                     </div>
                     {mode !== Mode.IDLE ? (
                         <>
