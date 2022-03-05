@@ -474,12 +474,10 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                     height={stageSize.y}
                                 />
                                 {selectedFormation && mode !== Mode.IDLE ? (
-                                    <Container>
-                                        <Container key={selectedFormation.id}>
-                                            {selectedFormation.units.map(unit => (
-                                                getUnitSprite({unit: unit})
-                                            ))}
-                                        </Container>
+                                    <Container key={selectedFormation.id}>
+                                        {selectedFormation.units.map(unit => (
+                                            getUnitSprite({unit: unit})
+                                        ))}
                                     </Container>
                                 ) : (
                                     <></>
