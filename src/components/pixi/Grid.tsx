@@ -42,10 +42,10 @@ const Grid = ({width, height, color, lineThickness, pitch}: GridProps) => {
         const uniforms = {
             thickness: lineThickness,
             color: [...color!, 1.0],
-            vpw: width,
-            vph: height,
+            vpw: width * 2,
+            vph: height * 2,
             offset: [0, 0],
-            pitch: [pitch!.x, pitch!.y]
+            pitch: [pitch!.x * 2, pitch!.y * 2]
         };
 
         const gridShader = new PIXI.Filter(undefined, shaderCode, uniforms);
