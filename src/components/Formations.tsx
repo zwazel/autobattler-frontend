@@ -48,13 +48,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
         const scalar = Math.floor(window.innerWidth / defaultGridSize);
 
         const gridCellSize = defaultGridSize + scalar;
-        console.log("gridCellSize", gridCellSize);
 
         let stageWidth = gridSize.x * gridCellSize;
         let stageHeight = gridSize.y * gridCellSize;
 
         const newStageSize = new Position(stageWidth, stageHeight);
-        console.log("newStageSize", newStageSize);
 
         setStageSize(newStageSize);
         setGridCellSize(gridCellSize);
