@@ -380,32 +380,36 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                         {formations
                             .filter(formation => formation.id !== -1)
                             .map(formation => (
-                                <button key={formation.id} onClick={() => {
-                                    setMode(Mode.EDIT);
-                                    if (!selectedFormation || selectedFormation.id !== formation.id) {
-                                        setSelectedFormation(formation);
-                                    }
-                                }}>
+                                <button key={formation.id}
+                                        className={selectedFormation && selectedFormation.id === formation.id ? "active" : ""}
+                                        onClick={() => {
+                                            setMode(Mode.EDIT);
+                                            if (!selectedFormation || selectedFormation.id !== formation.id) {
+                                                setSelectedFormation(formation);
+                                            }
+                                        }}>
                                     <p>{formation.id}</p>
                                 </button>
                             ))}
                         {(amountFormations < user.maxAmountFormations) ? (
-                            <button onClick={() => {
-                                setMode(Mode.ADD);
-                                const newFormation = formations.find(f => f.id === -1);
-                                if (newFormation) {
-                                    if (!selectedFormation || selectedFormation.id !== newFormation.id) {
+                            <button
+                                className={selectedFormation && selectedFormation.id === -1 ? "active" : ""}
+                                onClick={() => {
+                                    setMode(Mode.ADD);
+                                    const newFormation = formations.find(f => f.id === -1);
+                                    if (newFormation) {
+                                        if (!selectedFormation || selectedFormation.id !== newFormation.id) {
+                                            setSelectedFormation(newFormation);
+                                        }
+                                    } else {
+                                        const newFormation = {
+                                            id: -1,
+                                            units: [],
+                                        };
+                                        formations.push(newFormation);
                                         setSelectedFormation(newFormation);
                                     }
-                                } else {
-                                    const newFormation = {
-                                        id: -1,
-                                        units: [],
-                                    };
-                                    formations.push(newFormation);
-                                    setSelectedFormation(newFormation);
-                                }
-                            }}>
+                                }}>
                                 <p>New</p>
                             </button>
                         ) : (
