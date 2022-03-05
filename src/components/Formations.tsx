@@ -333,6 +333,8 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                         setFormations(newFormations);
 
                                         setSelectedFormation(null);
+
+                                        user.amountFormations--;
                                     } else {
                                         throw new Error("Failed to delete formation");
                                     }
@@ -363,6 +365,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                     ) : (
                         <p>You don't seem to have any formations, go ahead and create your first!</p>
                     )}
+
+                    <div>
+                        <h2>You can create new formations: {(user.amountFormations < user.maxAmountFormations) ? 'Yes' : 'No'}</h2>
+                    </div>
+
                     <div className="formations">
                         {formations
                             .filter(formation => formation.id !== -1)
