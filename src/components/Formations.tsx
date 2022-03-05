@@ -14,6 +14,7 @@ import ParseUnitType from "./classes/utils/ParseUnitType";
 import {confirmAlert} from 'react-confirm-alert';
 import '../assets/css/confirm-alert.css'
 import User from "./classes/User";
+import {Col, Row} from "react-bootstrap";
 
 export interface Formation {
     id: number;
@@ -457,33 +458,43 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                         <p>Please select one of your formations or create a new one</p>
                     )}
                     {done ? (
-                        <Stage
-                            width={stageSize.x}
-                            height={stageSize.y}
-                            options={{
-                                backgroundColor: 0x4287f5,
-                                resolution: 2,
-                            }}
-                        >
-                            <Grid width={stageSize.x} height={stageSize.y} pitch={{x: gridCellSize, y: gridCellSize}}/>
-                            <Viewport width={stageSize.x} height={stageSize.y}>
-                                <Rectangle
-                                    x={0}
-                                    y={0}
-                                    width={stageSize.x}
-                                    height={stageSize.y}
-                                />
-                                {selectedFormation && mode !== Mode.IDLE ? (
-                                    <Container key={selectedFormation.id}>
-                                        {selectedFormation.units.map(unit => (
-                                            getUnitSprite({unit: unit})
-                                        ))}
-                                    </Container>
-                                ) : (
-                                    <></>
-                                )}
-                            </Viewport>
-                        </Stage>
+                        <Container>
+                            <Row>
+                                <Col>
+                                    <Stage
+                                        width={stageSize.x}
+                                        height={stageSize.y}
+                                        options={{
+                                            backgroundColor: 0x4287f5,
+                                            resolution: 2,
+                                        }}
+                                    >
+                                        <Grid width={stageSize.x} height={stageSize.y}
+                                              pitch={{x: gridCellSize, y: gridCellSize}}/>
+                                        <Viewport width={stageSize.x} height={stageSize.y}>
+                                            <Rectangle
+                                                x={0}
+                                                y={0}
+                                                width={stageSize.x}
+                                                height={stageSize.y}
+                                            />
+                                            {selectedFormation && mode !== Mode.IDLE ? (
+                                                <Container key={selectedFormation.id}>
+                                                    {selectedFormation.units.map(unit => (
+                                                        getUnitSprite({unit: unit})
+                                                    ))}
+                                                </Container>
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </Viewport>
+                                    </Stage>
+                                </Col>
+                                <Col>
+                                    <p>HELLO</p>
+                                </Col>
+                            </Row>
+                        </Container>
                     ) : (
                         <p>
                             We're still working on it... Please wait :)
