@@ -18,10 +18,12 @@ interface userInfos {
     id: number,
     amountUnits: number,
     maxAmountUnits: number,
+    amountFormations: number,
+    maxAmountFormations: number,
 }
 
 export default function Navigation() {
-    const [user, setUser] = React.useState<User>(new User(-1, "undefined", false, -1, -1));
+    const [user, setUser] = React.useState<User>(new User(-1, "undefined", false, -1, -1, -1, -1));
 
     const [loading, setLoading] = useState(true);
 
@@ -46,6 +48,8 @@ export default function Navigation() {
                         id: -1,
                         amountUnits: -1,
                         maxAmountUnits: -1,
+                        amountFormations: -1,
+                        maxAmountFormations: -1,
                         loggedIn: false,
                     } as userInfos;
                 }
@@ -55,7 +59,7 @@ export default function Navigation() {
                     setLoading(false);
                 } else {
                     const message = JSON.parse(r.message) as userInfos;
-                    const newUser = new User(message.id, message.username, true, message.amountUnits, message.maxAmountUnits);
+                    const newUser = new User(message.id, message.username, true, message.amountUnits, message.maxAmountUnits, message.amountFormations, message.maxAmountFormations);
                     setUser(newUser);
 
                     fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getUnitTypes`, {
@@ -202,7 +206,7 @@ function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
                 <Route path={"/profile/*"} element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> :
                     <ProfileHeader user={user}/>}>
                     <Route path={""} element={<Profile user={user} unitTypes={unitTypes}/>}/>
-                    <Route path={"formations/"} element={<Formations unitTypes={unitTypes}/>}/>
+                    <Route path={"formations/"} element={<Formations user={user} unitTypes={unitTypes}/>}/>
                 </Route>
                 <Route path={"/loader"} element={<Loader/>}/>
                 <Route path={"/serverInfos"} element={<GetServerInfos/>}/>

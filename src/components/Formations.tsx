@@ -13,6 +13,7 @@ import IsPositionFree from "./utils/IsPositionFree";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import {confirmAlert} from 'react-confirm-alert';
 import '../assets/css/confirm-alert.css'
+import User from "./classes/User";
 
 export interface Formation {
     id: number;
@@ -25,8 +26,10 @@ export enum Mode {
     IDLE = 'IDLE'
 }
 
-export default function Formations(props: { unitTypes: UnitTypes[] }) {
+export default function Formations(props: { user: User, unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
+    const user = props.user;
+
     const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [loaded, setLoaded] = useState<boolean>(false);
     const [done, setDone] = useState<boolean>(false);
@@ -208,42 +211,47 @@ export default function Formations(props: { unitTypes: UnitTypes[] }) {
 
     function saveFormation(formation: Formation) {
         if (formation.units.length > 0) {
-            const unitData = [];
-            let priorityCounter = 1;
-            for (let unit of formation.units) {
-                unitData.push({
-                    id: unit.id,
-                    priority: priorityCounter++, // todo: PRIORITY
-                    position: {
-                        x: unit.position.x - 1,
-                        y: unit.position.y - 1,
-                    },
-                });
-            }
-
-            const data = {
-                units: unitData
-            }
-
-            fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addFormation`, {
-                method: "POST",
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify(data)
-            }).then(response => {
-                if (response.ok) {
-                    setSelectedFormation(null);
-                    return response.json();
-                } else {
-                    throw new Error("Failed to save formation");
+            if (user.amountFormations < user.maxAmountFormations) {
+                const unitData = [];
+                let priorityCounter = 1;
+                for (let unit of formation.units) {
+                    unitData.push({
+                        id: unit.id,
+                        priority: priorityCounter++, // todo: PRIORITY
+                        position: {
+                            x: unit.position.x - 1,
+                            y: unit.position.y - 1,
+                        },
+                    });
                 }
-            }).then(data => {
-                const formation = getFormationFromJson(data, units);
-                setFormations([...formations, formation]);
-            })
+
+                const data = {
+                    units: unitData
+                }
+
+                fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/addFormation`, {
+                    method: "POST",
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                }).then(response => {
+                    if (response.ok) {
+                        setSelectedFormation(null);
+                        return response.json();
+                    } else {
+                        throw new Error("Failed to save formation");
+                    }
+                }).then(data => {
+                    const formation = getFormationFromJson(data, units);
+                    setFormations([...formations, formation]);
+                    user.amountFormations++;
+                })
+            } else {
+                alert("You can't have more than " + user.maxAmountFormations + " formations!");
+            }
         } else {
             alert("No units in formation!");
         }

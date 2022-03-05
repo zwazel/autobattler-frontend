@@ -4,13 +4,17 @@ export default class User {
     private _loggedIn: boolean;
     private _amountUnits: number;
     private _maxAmountUnits: number;
+    private _amountFormations: number;
+    private _maxAmountFormations: number;
 
-    constructor(id: number, username: string, loggedIn: boolean, amountUnits: number, maxAmountUnits: number) {
+    constructor(id: number, username: string, loggedIn: boolean, amountUnits: number, maxAmountUnits: number, amountFormations: number, maxAmountFormations: number) {
         this._id = id;
         this._username = username;
         this._loggedIn = loggedIn;
         this._amountUnits = amountUnits;
         this._maxAmountUnits = maxAmountUnits;
+        this._amountFormations = amountFormations;
+        this._maxAmountFormations = maxAmountFormations;
     }
 
     get id(): number {
@@ -51,5 +55,21 @@ export default class User {
 
     set maxAmountUnits(value: number) {
         this._maxAmountUnits = value;
+    }
+
+    get amountFormations(): number {
+        return this._amountFormations;
+    }
+
+    set amountFormations(value: number) {
+        this._amountFormations = value;
+    }
+
+    get maxAmountFormations(): number {
+        return this._maxAmountFormations;
+    }
+
+    set maxAmountFormations(value: number) {
+        this._maxAmountFormations = value;
     }
 }
