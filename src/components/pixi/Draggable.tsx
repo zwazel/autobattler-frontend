@@ -15,10 +15,11 @@ interface Props {
     gridCellSize: number;
     alignToGrid: boolean;
     allOtherUnits: Unit[];
-    unit: Unit
+    unit: Unit;
+    onRightClick: Function;
 }
 
-const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: Props) => {
+const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit, onRightClick}: Props) => {
     const scalePosition = (position: Position, downScale: boolean) => {
         if (downScale) {
             return new Position(
@@ -98,6 +99,11 @@ const Draggable = ({stageSize, gridCellSize, alignToGrid, allOtherUnits, unit}: 
             pointerup={onDragEnd}
             pointerupoutside={onDragEnd}
             pointermove={onDragMove}
+            rightclick={
+                (event: PIXI.InteractionEvent) => {
+                    onRightClick(unit);
+                }
+            }
         >
             <Text
                 text={unit.name}

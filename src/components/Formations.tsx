@@ -131,14 +131,30 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
             })
     }, [getFormationFromJson, unitTypes]);
 
+    const removeUnitFromFormation = (unit: Unit) => {
+        console.log("removeUnitFromFormation");
+        if (selectedFormation) {
+            const newFormation = {
+                ...selectedFormation,
+                units: selectedFormation.units.filter(u => u.id !== unit.id),
+            };
+            setFormations(formations.map(f => f.id === selectedFormation.id ? newFormation : f));
+        }
+    };
+
     const getUnitSprite = (props: { unit: Unit }) => {
         if (selectedFormation) {
             const unit = props.unit;
+
+            const removeUnitFromFormationCallback = () => {
+                removeUnitFromFormation(unit);
+            };
 
             return (
                 <Draggable key={unit.type.typeName + "-" + unit.id} unit={unit}
                            gridCellSize={gridCellSize} stageSize={stageSize} alignToGrid={true}
                            allOtherUnits={selectedFormation.units}
+                           onRightClick={removeUnitFromFormationCallback}
                 />
             )
         } else {
@@ -172,6 +188,15 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                         ...selectedFormation,
                         units: tempState,
                     });
+
+                    // update formation in formations
+                    let tempFormations = [...formations];
+                    tempFormations.forEach(f => {
+                        if (f.id === selectedFormation.id) {
+                            f.units = tempState;
+                        }
+                    });
+                    setFormations(tempFormations);
                 } else {
                     alert("No free space left!");
                 }
@@ -246,7 +271,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                         setSelectedFormation(null);
                         return response.json();
                     } else {
-                        if(response.status === 400) {
+                        if (response.status === 400) {
                             alert("Formation already exists!");
                         } else {
                             alert("Something went wrong!");
@@ -299,7 +324,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                     setSelectedFormation(null);
                     return response.json();
                 } else {
-                    if(response.status === 400) {
+                    if (response.status === 400) {
                         alert("Formation already exists!");
                     } else {
                         alert("Something went wrong!");
