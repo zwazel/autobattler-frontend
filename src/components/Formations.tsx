@@ -42,7 +42,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     const [mode, setMode] = useState<Mode>(Mode.IDLE);
     const [amountFormations, setAmountFormations] = useState<number>(user.amountFormations);
 
-    const formationIDCounter = useRef<number>(0);
+    const formationIDCounter = useRef<number>(1);
 
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
