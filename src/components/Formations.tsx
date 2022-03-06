@@ -246,7 +246,12 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                         setSelectedFormation(null);
                         return response.json();
                     } else {
-                        throw new Error("Failed to save formation");
+                        if(response.status === 400) {
+                            alert("Formation already exists!");
+                        } else {
+                            alert("Something went wrong!");
+                            throw new Error("Failed to save formation");
+                        }
                     }
                 }).then(data => {
                     const formation = getFormationFromJson(data, units);
@@ -294,7 +299,12 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                     setSelectedFormation(null);
                     return response.json();
                 } else {
-                    throw new Error("Failed to update formation");
+                    if(response.status === 400) {
+                        alert("Formation already exists!");
+                    } else {
+                        alert("Something went wrong!");
+                        throw new Error("Failed to update formation");
+                    }
                 }
             }).then(data => {
                 const formation = getFormationFromJson(data, units);
