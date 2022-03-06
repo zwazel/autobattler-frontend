@@ -132,7 +132,6 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     }, [getFormationFromJson, unitTypes]);
 
     const removeUnitFromFormation = (unit: Unit) => {
-        console.log("removeUnitFromFormation");
         if (selectedFormation) {
             let tempFormation = selectedFormation;
             tempFormation.units = tempFormation.units.filter(u => u.id !== unit.id);
