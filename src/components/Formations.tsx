@@ -14,7 +14,7 @@ import ParseUnitType from "./classes/utils/ParseUnitType";
 import {confirmAlert} from 'react-confirm-alert';
 import '../assets/css/confirm-alert.css'
 import User from "./classes/User";
-import {Container as BootstrapContainer,Col, Row} from "react-bootstrap";
+import {Col, Container as BootstrapContainer, Row} from "react-bootstrap";
 
 export interface Formation {
     id: number;
@@ -479,11 +479,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                                 height={stageSize.y}
                                             />
                                             {selectedFormation && mode !== Mode.IDLE ? (
-                                                    <Container key={selectedFormation.id}>
-                                                        {selectedFormation.units.map(unit => (
-                                                            getUnitSprite({unit: unit})
-                                                        ))}
-                                                    </Container>
+                                                <Container key={selectedFormation.id}>
+                                                    {selectedFormation.units.map(unit => (
+                                                        getUnitSprite({unit: unit})
+                                                    ))}
+                                                </Container>
                                             ) : (
                                                 <></>
                                             )}
