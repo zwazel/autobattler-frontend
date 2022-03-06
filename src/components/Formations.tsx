@@ -14,7 +14,7 @@ import ParseUnitType from "./classes/utils/ParseUnitType";
 import {confirmAlert} from 'react-confirm-alert';
 import '../assets/css/confirm-alert.css'
 import User from "./classes/User";
-import {Col, Row} from "react-bootstrap";
+import {Container as BootstrapContainer,Col, Row} from "react-bootstrap";
 
 export interface Formation {
     id: number;
@@ -458,7 +458,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                         <p>Please select one of your formations or create a new one</p>
                     )}
                     {done ? (
-                        <Container>
+                        <BootstrapContainer>
                             <Row>
                                 <Col>
                                     <Stage
@@ -479,11 +479,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                                 height={stageSize.y}
                                             />
                                             {selectedFormation && mode !== Mode.IDLE ? (
-                                                <Container key={selectedFormation.id}>
-                                                    {selectedFormation.units.map(unit => (
-                                                        getUnitSprite({unit: unit})
-                                                    ))}
-                                                </Container>
+                                                    <Container key={selectedFormation.id}>
+                                                        {selectedFormation.units.map(unit => (
+                                                            getUnitSprite({unit: unit})
+                                                        ))}
+                                                    </Container>
                                             ) : (
                                                 <></>
                                             )}
@@ -494,7 +494,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                     <p>HELLO</p>
                                 </Col>
                             </Row>
-                        </Container>
+                        </BootstrapContainer>
                     ) : (
                         <p>
                             We're still working on it... Please wait :)
