@@ -503,6 +503,12 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                             backgroundColor: 0x4287f5,
                                             resolution: 2,
                                         }}
+                                        onContextMenu={(e) => {
+                                            if (e.button === 2) {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                            }
+                                        }}
                                     >
                                         <Grid width={stageSize.x} height={stageSize.y}
                                               pitch={{x: gridCellSize, y: gridCellSize}}/>
