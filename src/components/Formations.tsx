@@ -134,11 +134,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     const removeUnitFromFormation = (unit: Unit) => {
         console.log("removeUnitFromFormation");
         if (selectedFormation) {
-            const newFormation = {
-                ...selectedFormation,
-                units: selectedFormation.units.filter(u => u.id !== unit.id),
-            };
-            setFormations(formations.map(f => f.id === selectedFormation.id ? newFormation : f));
+            let tempFormation = selectedFormation;
+            tempFormation.units = tempFormation.units.filter(u => u.id !== unit.id);
+            setSelectedFormation(tempFormation);
+
+            setFormations(formations.map(f => f.id === selectedFormation.id ? tempFormation : f));
         }
     };
 
