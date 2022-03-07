@@ -21,6 +21,7 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
     const [loaded, setLoaded] = useState<boolean>(false);
     const [formations, setFormations] = useState<Formation[]>([]);
     const [winner, setWinner] = useState<string>();
+    const [enemyFormation, setEnemyFormation] = useState<Formation>();
 
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
@@ -38,20 +39,26 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
         setDone(true);
     };
 
-    const getFormationFromJson = useCallback((json: any, units: Unit[]) => {
+    const getFormationFromJson = useCallback((json: any, units?: Unit[], alreadyParsed?: boolean) => {
         const formationID = json.id;
-        const jsonFormation = JSON.parse(json.formationJson);
+        const jsonFormation = (alreadyParsed) ? json : JSON.parse(json.formationJson);
         const unitsInFormation: Unit[] = [];
         for (let unitJson of jsonFormation) {
             const unitType = unitTypes.find(unitType => unitType.typeName === unitJson.type);
             if (unitType) {
-                const unit = units.find(unit => unit.id === unitJson.id);
-                if (unit) {
-                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                if (units) {
+                    const unit = units.find(unit => unit.id === unitJson.id);
+                    if (unit) {
+                        const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                        newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
+                        unitsInFormation.push(newUnit);
+                    } else {
+                        throw new Error("unit not found");
+                    }
+                } else {
+                    const newUnit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, unitJson.side, unitJson.position);
                     newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                     unitsInFormation.push(newUnit);
-                } else {
-                    throw new Error("unit not found");
                 }
             } else {
                 throw new Error("UnitType not found");
@@ -166,6 +173,9 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
             ).then((data) => {
                 console.log(data);
                 setWinner(data.winner);
+                const enemyFormation = getFormationFromJson(data.unitsRight, undefined, true);
+                setEnemyFormation(enemyFormation);
+                console.log(enemyFormation);
             })
         }
     }
@@ -242,6 +252,15 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
                                         {selectedFormation ? (
                                             <Container key={selectedFormation.id}>
                                                 {selectedFormation.units.map(unit => (
+                                                    getUnitSprite({unit: unit})
+                                                ))}
+                                            </Container>
+                                        ) : (
+                                            <></>
+                                        )}
+                                        {enemyFormation ? (
+                                            <Container key={enemyFormation.id}>
+                                                {enemyFormation.units.map(unit => (
                                                     getUnitSprite({unit: unit})
                                                 ))}
                                             </Container>
