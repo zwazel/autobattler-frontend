@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {Container, Stage} from '@inlet/react-pixi'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
@@ -42,8 +42,6 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     const [mode, setMode] = useState<Mode>(Mode.IDLE);
     const [amountFormations, setAmountFormations] = useState<number>(user.amountFormations);
 
-    const formationIDCounter = useRef<number>(1);
-
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
         const scalar = Math.floor(window.innerWidth / defaultGridSize);
@@ -62,8 +60,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     };
 
     const getFormationFromJson = useCallback((json: any, units: Unit[]) => {
-        const formationID = (json.id <= 0) ? formationIDCounter.current : json.id;
-        formationIDCounter.current = formationID + 1;
+        const formationID = json.id;
         const jsonFormation = JSON.parse(json.formationJson);
         const unitsInFormation: Unit[] = [];
         for (let unitJson of jsonFormation) {

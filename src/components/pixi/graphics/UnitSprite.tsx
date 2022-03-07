@@ -27,8 +27,6 @@ export default function UnitSprite(props: { side: Side, unit: Unit, gridCellSize
             x={scaledPos.x}
             y={scaledPos.y}
             anchor={0.5}
-            interactive
-            buttonMode
         >
             <Text
                 text={unit.name}
