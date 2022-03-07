@@ -1,6 +1,6 @@
 import User from "./classes/User";
 import UnitTypes from "./classes/UnitTypes";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Position from "./classes/utils/Position";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import Unit from "./classes/units/Unit";
@@ -23,8 +23,6 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
     const [loaded, setLoaded] = useState<boolean>(false);
     const [formations, setFormations] = useState<Formation[]>([]);
 
-    const formationIDCounter = useRef<number>(1);
-
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
         const scalar = Math.floor(window.innerWidth / defaultGridSize);
@@ -42,8 +40,7 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
     };
 
     const getFormationFromJson = useCallback((json: any, units: Unit[]) => {
-        const formationID = (json.id <= 0) ? formationIDCounter.current : json.id;
-        formationIDCounter.current = formationID + 1;
+        const formationID = json.id;
         const jsonFormation = JSON.parse(json.formationJson);
         const unitsInFormation: Unit[] = [];
         for (let unitJson of jsonFormation) {
@@ -156,6 +153,23 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
         }
     }
 
+    const startBattle = () => {
+        if (selectedFormation) {
+            fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getFightHistory/${selectedFormation.id}`, {
+                method: "GET",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+            }).then(
+                res => res.json()
+            ).then((data) => {
+                console.log(data);
+            })
+        }
+    }
+
     return (
         <div>
             <h1>Battle</h1>
@@ -184,40 +198,53 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
                             ))}
                     </div>
                     {done ? (
-                        <Stage
-                            width={stageSize.x}
-                            height={stageSize.y}
-                            options={{
-                                backgroundColor: 0x4287f5,
-                                resolution: 2,
-                            }}
-                            onContextMenu={(e) => {
-                                if (e.button === 2) {
-                                    e.preventDefault();
-                                    e.stopPropagation();
+                        <>
+                            <div>
+                                {selectedFormation ?
+                                    <button onClick={startBattle}>
+                                        Start battle
+                                    </button>
+                                    :
+                                    <></>
                                 }
-                            }}
-                        >
-                            <Grid width={stageSize.x} height={stageSize.y}
-                                  pitch={{x: gridCellSize, y: gridCellSize}}/>
-                            <Viewport width={stageSize.x} height={stageSize.y}>
-                                <Rectangle
-                                    x={0}
-                                    y={0}
+                            </div>
+                            <div>
+                                <Stage
                                     width={stageSize.x}
                                     height={stageSize.y}
-                                />
-                                {selectedFormation ? (
-                                    <Container key={selectedFormation.id}>
-                                        {selectedFormation.units.map(unit => (
-                                            getUnitSprite({unit: unit})
-                                        ))}
-                                    </Container>
-                                ) : (
-                                    <></>
-                                )}
-                            </Viewport>
-                        </Stage>
+                                    options={{
+                                        backgroundColor: 0x4287f5,
+                                        resolution: 2,
+                                    }}
+                                    onContextMenu={(e) => {
+                                        if (e.button === 2) {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                        }
+                                    }}
+                                >
+                                    <Grid width={stageSize.x} height={stageSize.y}
+                                          pitch={{x: gridCellSize, y: gridCellSize}}/>
+                                    <Viewport width={stageSize.x} height={stageSize.y}>
+                                        <Rectangle
+                                            x={0}
+                                            y={0}
+                                            width={stageSize.x}
+                                            height={stageSize.y}
+                                        />
+                                        {selectedFormation ? (
+                                            <Container key={selectedFormation.id}>
+                                                {selectedFormation.units.map(unit => (
+                                                    getUnitSprite({unit: unit})
+                                                ))}
+                                            </Container>
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </Viewport>
+                                </Stage>
+                            </div>
+                        </>
                     ) : (
                         <p>
                             We're still working on it... Please wait :)
