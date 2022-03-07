@@ -10,6 +10,7 @@ import Grid from "./pixi/Grid";
 import Viewport from "./pixi/Viewport";
 import Rectangle from "./pixi/graphics/Rectangle";
 import Loader from "./Loader";
+import UnitSprite from "./pixi/graphics/UnitSprite";
 
 export default function Battle(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
@@ -131,30 +132,8 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
     const getUnitSprite = (props: { unit: Unit }) => {
         if (selectedFormation) {
             const unit = props.unit;
-            const scaledPosition = scalePosition(unit.position, false);
 
-            return (
-                <Sprite
-                    key={unit.id}
-                    image={unit.image}
-                    x={scaledPosition.x}
-                    y={scaledPosition.y}
-                    anchor={0.5}
-                    buttonMode
-                >
-                    <Text
-                        text={unit.name}
-                        x={0}
-                        y={0}
-                        style={{
-                            fontFamily: "Arial",
-                            fontSize: 12,
-                            fill: "white",
-                            align: "center",
-                        }}
-                    />
-                </Sprite>
-            )
+            return <UnitSprite key={unit.id} unit={unit} gridCellSize={gridCellSize} side={unit.side}/>
         } else {
             return (<></>);
         }
