@@ -1,4 +1,3 @@
-import User from "./classes/User";
 import UnitTypes from "./classes/UnitTypes";
 import React, {useCallback, useEffect, useState} from "react";
 import Position from "./classes/utils/Position";
@@ -12,9 +11,8 @@ import Viewport from "./pixi/Viewport";
 import Rectangle from "./pixi/graphics/Rectangle";
 import Loader from "./Loader";
 
-export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
+export default function Battle(props: { unitTypes: UnitTypes[] }) {
     const unitTypes = props.unitTypes;
-    const user = props.user;
 
     const [selectedFormation, setSelectedFormation] = useState<Formation>();
     const [stageSize, setStageSize] = useState<Position>(new Position(0, 0));

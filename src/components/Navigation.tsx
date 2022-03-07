@@ -216,7 +216,7 @@ function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
                     <ProfileHeader user={user}/>}>
                     <Route path={""} element={<Profile user={user} unitTypes={unitTypes}/>}/>
                     <Route path={"formations/"} element={<Formations user={user} unitTypes={unitTypes}/>}/>
-                    <Route path={"battle/"} element={<Battle user={user} unitTypes={unitTypes}/>}/>
+                    <Route path={"battle/"} element={<Battle unitTypes={unitTypes}/>}/>
                 </Route>
                 <Route path={"/loader"} element={<Loader/>}/>
                 <Route path={"/serverInfos"} element={<GetServerInfos/>}/>
