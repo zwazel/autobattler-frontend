@@ -5,10 +5,8 @@ import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import Unit from "./classes/units/Unit";
 import {Formation} from "./Formations";
 import ParseUnitType from "./classes/utils/ParseUnitType";
-import {Container, Stage} from "@inlet/react-pixi";
+import {Container, Stage} from "react-pixi-fiber";
 import Grid from "./pixi/Grid";
-import Viewport from "./pixi/Viewport";
-import Rectangle from "./pixi/graphics/Rectangle";
 import Loader from "./Loader";
 import UnitSprite from "./pixi/graphics/UnitSprite";
 
@@ -197,11 +195,11 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
                                     </div>
                                     <div>
                                         <Stage
-                                            width={stageSize.x}
-                                            height={stageSize.y}
                                             options={{
                                                 backgroundColor: 0x4287f5,
                                                 resolution: 2,
+                                                width: stageSize.x,
+                                                height: stageSize.y,
                                             }}
                                             onContextMenu={(e) => {
                                                 if (e.button === 2) {
@@ -212,32 +210,24 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
                                         >
                                             <Grid width={stageSize.x} height={stageSize.y}
                                                   pitch={{x: gridCellSize, y: gridCellSize}}/>
-                                            <Viewport width={stageSize.x} height={stageSize.y}>
-                                                <Rectangle
-                                                    x={0}
-                                                    y={0}
-                                                    width={stageSize.x}
-                                                    height={stageSize.y}
-                                                />
-                                                {selectedFormation ? (
-                                                    <Container key={selectedFormation.id}>
-                                                        {selectedFormation.units.map(unit => (
-                                                            getUnitSprite({unit: unit})
-                                                        ))}
-                                                    </Container>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                                {enemyFormation ? (
-                                                    <Container key={enemyFormation.id}>
-                                                        {enemyFormation.units.map(unit => (
-                                                            getUnitSprite({unit: unit})
-                                                        ))}
-                                                    </Container>
-                                                ) : (
-                                                    <></>
-                                                )}
-                                            </Viewport>
+                                            {selectedFormation ? (
+                                                <Container key={selectedFormation.id}>
+                                                    {selectedFormation.units.map(unit => (
+                                                        getUnitSprite({unit: unit})
+                                                    ))}
+                                                </Container>
+                                            ) : (
+                                                <></>
+                                            )}
+                                            {enemyFormation ? (
+                                                <Container key={enemyFormation.id}>
+                                                    {enemyFormation.units.map(unit => (
+                                                        getUnitSprite({unit: unit})
+                                                    ))}
+                                                </Container>
+                                            ) : (
+                                                <></>
+                                            )}
                                         </Stage>
                                     </div>
                                 </>

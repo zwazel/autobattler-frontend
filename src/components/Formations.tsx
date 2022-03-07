@@ -1,11 +1,9 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {Container, Stage} from '@inlet/react-pixi'
+import {Container, Stage} from 'react-pixi-fiber'
 import UnitTypes from "./classes/UnitTypes";
 import Position from "./classes/utils/Position";
 import Unit from "./classes/units/Unit";
 import Loader from "./Loader";
-import Viewport from "./pixi/Viewport";
-import Rectangle from "./pixi/graphics/Rectangle";
 import Draggable from "./pixi/Draggable";
 import Grid from "./pixi/Grid";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
@@ -493,11 +491,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                             <Row>
                                 <Col>
                                     <Stage
-                                        width={stageSize.x}
-                                        height={stageSize.y}
                                         options={{
                                             backgroundColor: 0x4287f5,
                                             resolution: 2,
+                                            width: stageSize.x,
+                                            height: stageSize.y,
                                         }}
                                         onContextMenu={(e) => {
                                             if (e.button === 2) {
@@ -508,23 +506,15 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                                     >
                                         <Grid width={stageSize.x} height={stageSize.y}
                                               pitch={{x: gridCellSize, y: gridCellSize}}/>
-                                        <Viewport width={stageSize.x} height={stageSize.y}>
-                                            <Rectangle
-                                                x={0}
-                                                y={0}
-                                                width={stageSize.x}
-                                                height={stageSize.y}
-                                            />
-                                            {selectedFormation && mode !== Mode.IDLE ? (
-                                                <Container key={selectedFormation.id}>
-                                                    {selectedFormation.units.map(unit => (
-                                                        getUnitSprite({unit: unit})
-                                                    ))}
-                                                </Container>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </Viewport>
+                                        {selectedFormation && mode !== Mode.IDLE ? (
+                                            <Container key={selectedFormation.id}>
+                                                {selectedFormation.units.map(unit => (
+                                                    getUnitSprite({unit: unit})
+                                                ))}
+                                            </Container>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </Stage>
                                 </Col>
                                 <Col>

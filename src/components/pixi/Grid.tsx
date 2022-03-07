@@ -1,5 +1,5 @@
 import React, {useCallback} from "react";
-import {Graphics} from "@inlet/react-pixi";
+import {Graphics} from "react-pixi-fiber";
 import * as PIXI from "pixi.js";
 
 interface GridProps {
