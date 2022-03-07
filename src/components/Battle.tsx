@@ -22,6 +22,7 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
     const [done, setDone] = useState<boolean>(false);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [formations, setFormations] = useState<Formation[]>([]);
+    const [winner, setWinner] = useState<string>();
 
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
@@ -166,6 +167,7 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
                 res => res.json()
             ).then((data) => {
                 console.log(data);
+                setWinner(data.winner);
             })
         }
     }
@@ -204,6 +206,13 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
                                     <button onClick={startBattle}>
                                         Start battle
                                     </button>
+                                    :
+                                    <></>
+                                }
+                            </div>
+                            <div>
+                                {winner ?
+                                    <p>{winner} won!</p>
                                     :
                                     <></>
                                 }
