@@ -5,7 +5,7 @@ import Position from "./classes/utils/Position";
 import Unit from "./classes/units/Unit";
 import Loader from "./Loader";
 import Viewport from "./pixi/Viewport";
-import Rectangle from "./graphics/Rectangle";
+import Rectangle from "./pixi/graphics/Rectangle";
 import Draggable from "./pixi/Draggable";
 import Grid from "./pixi/Grid";
 import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
