@@ -37,7 +37,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
     const [units, setUnits] = useState<Unit[]>([]);
     const [formations, setFormations] = useState<Formation[]>([]);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
-    const [stageSize, setStageSize] = useState<Position>(new Position(-1,-1));
+    const [stageSize, setStageSize] = useState<Position>(new Position(-1, -1));
     const [gridCellSize, setGridCellSize] = useState<number>(64);
     const [mode, setMode] = useState<Mode>(Mode.IDLE);
     const [amountFormations, setAmountFormations] = useState<number>(user.amountFormations);
