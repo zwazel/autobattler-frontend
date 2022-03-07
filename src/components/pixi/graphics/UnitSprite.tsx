@@ -18,7 +18,7 @@ export default function UnitSprite(props: { side: Side, unit: Unit, gridCellSize
         }
     };
 
-    const {side, unit, gridCellSize} = props;
+    const {unit, gridCellSize} = props;
     const scaledPos = scalePosition(unit.position, false);
 
     return (

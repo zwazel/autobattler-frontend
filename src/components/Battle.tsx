@@ -5,7 +5,7 @@ import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import Unit from "./classes/units/Unit";
 import {Formation} from "./Formations";
 import ParseUnitType from "./classes/utils/ParseUnitType";
-import {Container, Sprite, Stage, Text} from "@inlet/react-pixi";
+import {Container, Stage} from "@inlet/react-pixi";
 import Grid from "./pixi/Grid";
 import Viewport from "./pixi/Viewport";
 import Rectangle from "./pixi/graphics/Rectangle";
@@ -114,20 +114,6 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
                     });
             })
     }, [getFormationFromJson, unitTypes]);
-
-    const scalePosition = (position: Position, downScale: boolean) => {
-        if (downScale) {
-            return new Position(
-                (position.x + gridCellSize / 2) / gridCellSize,
-                (position.y + gridCellSize / 2) / gridCellSize
-            );
-        } else {
-            return new Position(
-                (position.x * gridCellSize) - gridCellSize / 2,
-                (position.y * gridCellSize) - gridCellSize / 2,
-            );
-        }
-    };
 
     const getUnitSprite = (props: { unit: Unit }) => {
         if (selectedFormation) {
