@@ -12,6 +12,7 @@ import Loader from "./Loader";
 import NotFound from "./NotFound";
 import GetServerInfos from "./misc/GetServerInfos";
 import UnitTypes from "./classes/UnitTypes";
+import Battle from "./Battle";
 
 interface userInfos {
     username: string,
@@ -164,6 +165,14 @@ function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
                                 </NavLink>
                             </li>
                             <li>
+                                <NavLink to={"/profile/battle/"}
+                                         style={({isActive}) => isActive ? activeStyle : notActiveStyle}
+                                         className={isActive => isActive ? 'active' : 'inactive'}
+                                >
+                                    Battle
+                                </NavLink>
+                            </li>
+                            <li>
                                 <Button onClick={
                                     async () => {
                                         if (await logout()) {
@@ -207,6 +216,7 @@ function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
                     <ProfileHeader user={user}/>}>
                     <Route path={""} element={<Profile user={user} unitTypes={unitTypes}/>}/>
                     <Route path={"formations/"} element={<Formations user={user} unitTypes={unitTypes}/>}/>
+                    <Route path={"battle/"} element={<Battle user={user} unitTypes={unitTypes}/>}/>
                 </Route>
                 <Route path={"/loader"} element={<Loader/>}/>
                 <Route path={"/serverInfos"} element={<GetServerInfos/>}/>
