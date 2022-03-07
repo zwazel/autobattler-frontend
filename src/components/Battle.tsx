@@ -22,6 +22,7 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
     const [formations, setFormations] = useState<Formation[]>([]);
     const [winner, setWinner] = useState<string>();
     const [enemyFormation, setEnemyFormation] = useState<Formation>();
+    const [doneLoadingBattle, setDoneLoadingBattle] = useState<boolean>(true);
 
     const scalePlayField = (gridSize: Position) => {
         const defaultGridSize = 64;
@@ -161,6 +162,7 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
 
     const startBattle = () => {
         if (selectedFormation) {
+            setDoneLoadingBattle(false);
             fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/battle/getFightHistory/${selectedFormation.id}`, {
                 method: "GET",
                 headers: {
@@ -176,6 +178,7 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
                 const enemyFormation = getFormationFromJson(data.unitsRight, undefined, true);
                 setEnemyFormation(enemyFormation);
                 console.log(enemyFormation);
+                setDoneLoadingBattle(true);
             })
         }
     }
@@ -209,67 +212,73 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
                     </div>
                     {done ? (
                         <>
-                            <div>
-                                {selectedFormation ?
-                                    <button onClick={startBattle}>
-                                        Start battle
-                                    </button>
-                                    :
-                                    <></>
-                                }
-                            </div>
-                            <div>
-                                {winner ?
-                                    <p>{winner} won!</p>
-                                    :
-                                    <></>
-                                }
-                            </div>
-                            <div>
-                                <Stage
-                                    width={stageSize.x}
-                                    height={stageSize.y}
-                                    options={{
-                                        backgroundColor: 0x4287f5,
-                                        resolution: 2,
-                                    }}
-                                    onContextMenu={(e) => {
-                                        if (e.button === 2) {
-                                            e.preventDefault();
-                                            e.stopPropagation();
+                            {doneLoadingBattle ? (
+                                <>
+                                    <div>
+                                        {selectedFormation ?
+                                            <button onClick={startBattle}>
+                                                Start battle
+                                            </button>
+                                            :
+                                            <></>
                                         }
-                                    }}
-                                >
-                                    <Grid width={stageSize.x} height={stageSize.y}
-                                          pitch={{x: gridCellSize, y: gridCellSize}}/>
-                                    <Viewport width={stageSize.x} height={stageSize.y}>
-                                        <Rectangle
-                                            x={0}
-                                            y={0}
+                                    </div>
+                                    <div>
+                                        {winner ?
+                                            <p>{winner} won!</p>
+                                            :
+                                            <></>
+                                        }
+                                    </div>
+                                    <div>
+                                        <Stage
                                             width={stageSize.x}
                                             height={stageSize.y}
-                                        />
-                                        {selectedFormation ? (
-                                            <Container key={selectedFormation.id}>
-                                                {selectedFormation.units.map(unit => (
-                                                    getUnitSprite({unit: unit})
-                                                ))}
-                                            </Container>
-                                        ) : (
-                                            <></>
-                                        )}
-                                        {enemyFormation ? (
-                                            <Container key={enemyFormation.id}>
-                                                {enemyFormation.units.map(unit => (
-                                                    getUnitSprite({unit: unit})
-                                                ))}
-                                            </Container>
-                                        ) : (
-                                            <></>
-                                        )}
-                                    </Viewport>
-                                </Stage>
-                            </div>
+                                            options={{
+                                                backgroundColor: 0x4287f5,
+                                                resolution: 2,
+                                            }}
+                                            onContextMenu={(e) => {
+                                                if (e.button === 2) {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+                                                }
+                                            }}
+                                        >
+                                            <Grid width={stageSize.x} height={stageSize.y}
+                                                  pitch={{x: gridCellSize, y: gridCellSize}}/>
+                                            <Viewport width={stageSize.x} height={stageSize.y}>
+                                                <Rectangle
+                                                    x={0}
+                                                    y={0}
+                                                    width={stageSize.x}
+                                                    height={stageSize.y}
+                                                />
+                                                {selectedFormation ? (
+                                                    <Container key={selectedFormation.id}>
+                                                        {selectedFormation.units.map(unit => (
+                                                            getUnitSprite({unit: unit})
+                                                        ))}
+                                                    </Container>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                                {enemyFormation ? (
+                                                    <Container key={enemyFormation.id}>
+                                                        {enemyFormation.units.map(unit => (
+                                                            getUnitSprite({unit: unit})
+                                                        ))}
+                                                    </Container>
+                                                ) : (
+                                                    <></>
+                                                )}
+                                            </Viewport>
+                                        </Stage>
+                                    </div>
+                                </>
+                            ) : (
+                                <Loader customText={"Loading battle..."}/>
+                            )}
                         </>
                     ) : (
                         <p>
