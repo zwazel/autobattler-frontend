@@ -1,10 +1,13 @@
 import React, {useEffect} from "react";
 import "../assets/css/loading.css";
 
-export default function Loader(props: { customText?: string }) {
+export default function Loader(props: { customText?: string, customAdditionalWarningText?: string, customTimerForWarningText?: number }) {
     const {customText} = props;
+    const {customAdditionalWarningText} = props;
+    const {customTimerForWarningText} = props;
+
     const [count, setCount] = React.useState(0);
-    const waitTime = 10; // seconds to wait before showing the extra text
+    const waitTime = (customTimerForWarningText ? customTimerForWarningText : 10); // seconds to wait before showing the extra text
 
     useEffect(
         () => {
@@ -18,7 +21,7 @@ export default function Loader(props: { customText?: string }) {
             const id = setInterval(timer, 1000);
             return () => clearInterval(id);
         },
-        [count]
+        [count, waitTime]
     );
 
     return (
@@ -27,7 +30,13 @@ export default function Loader(props: { customText?: string }) {
                 {customText ? customText : "Loading..."}
             </h1>
             {count >= waitTime &&
-                <span className={"info"}>If it's taking long, it's probably Heroku waking up...</span>}
+                <span className={"info"}>
+                    {
+                        customAdditionalWarningText ?
+                            customAdditionalWarningText :
+                            "If it's taking long, it's probably Heroku waking up..."
+                    }
+                </span>}
         </div>
     );
 }
