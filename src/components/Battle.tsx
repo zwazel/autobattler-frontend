@@ -6,7 +6,6 @@ import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import Unit from "./classes/units/Unit";
 import {Formation} from "./Formations";
 import ParseUnitType from "./classes/utils/ParseUnitType";
-import {Col, Container as BootstrapContainer, Row} from "react-bootstrap";
 import {Container, Sprite, Stage, Text} from "@inlet/react-pixi";
 import Grid from "./pixi/Grid";
 import Viewport from "./pixi/Viewport";
@@ -185,49 +184,40 @@ export default function Battle(props: { user: User, unitTypes: UnitTypes[] }) {
                             ))}
                     </div>
                     {done ? (
-                        <BootstrapContainer>
-                            <Row>
-                                <Col>
-                                    <Stage
-                                        width={stageSize.x}
-                                        height={stageSize.y}
-                                        options={{
-                                            backgroundColor: 0x4287f5,
-                                            resolution: 2,
-                                        }}
-                                        onContextMenu={(e) => {
-                                            if (e.button === 2) {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                            }
-                                        }}
-                                    >
-                                        <Grid width={stageSize.x} height={stageSize.y}
-                                              pitch={{x: gridCellSize, y: gridCellSize}}/>
-                                        <Viewport width={stageSize.x} height={stageSize.y}>
-                                            <Rectangle
-                                                x={0}
-                                                y={0}
-                                                width={stageSize.x}
-                                                height={stageSize.y}
-                                            />
-                                            {selectedFormation ? (
-                                                <Container key={selectedFormation.id}>
-                                                    {selectedFormation.units.map(unit => (
-                                                        getUnitSprite({unit: unit})
-                                                    ))}
-                                                </Container>
-                                            ) : (
-                                                <></>
-                                            )}
-                                        </Viewport>
-                                    </Stage>
-                                </Col>
-                                <Col>
-                                    <p>HELLO</p>
-                                </Col>
-                            </Row>
-                        </BootstrapContainer>
+                        <Stage
+                            width={stageSize.x}
+                            height={stageSize.y}
+                            options={{
+                                backgroundColor: 0x4287f5,
+                                resolution: 2,
+                            }}
+                            onContextMenu={(e) => {
+                                if (e.button === 2) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }
+                            }}
+                        >
+                            <Grid width={stageSize.x} height={stageSize.y}
+                                  pitch={{x: gridCellSize, y: gridCellSize}}/>
+                            <Viewport width={stageSize.x} height={stageSize.y}>
+                                <Rectangle
+                                    x={0}
+                                    y={0}
+                                    width={stageSize.x}
+                                    height={stageSize.y}
+                                />
+                                {selectedFormation ? (
+                                    <Container key={selectedFormation.id}>
+                                        {selectedFormation.units.map(unit => (
+                                            getUnitSprite({unit: unit})
+                                        ))}
+                                    </Container>
+                                ) : (
+                                    <></>
+                                )}
+                            </Viewport>
+                        </Stage>
                     ) : (
                         <p>
                             We're still working on it... Please wait :)
