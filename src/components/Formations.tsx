@@ -250,7 +250,6 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
                 }).then(data => {
                     if (data.success) {
                         data.response.then(data => {
-                            console.log(data);
                             const formation = getFormationFromJson(data, units);
                             setFormations([...formations, formation]);
                             user.amountFormations++;
@@ -258,7 +257,6 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
                         });
                     } else {
                         data.response.then(data => {
-                            console.log(data)
                             alert(data);
                         });
                     }
