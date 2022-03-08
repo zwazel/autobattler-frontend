@@ -209,7 +209,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
 
     function saveFormation(formation: Formation) {
         if (formation.units.length > 0) {
-            if (user.amountFormations < user.maxAmountFormations) {
+            if ((user.maxAmountFormations < 0) || (user.amountFormations < user.maxAmountFormations)) {
                 const unitData = [];
                 let priorityCounter = 1;
                 for (let unit of formation.units) {
@@ -378,7 +378,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
 
                     <div>
                         <h2>You can create new
-                            formations: {(amountFormations < user.maxAmountFormations) ? 'Yes' : 'No'}</h2>
+                            formations: {((user.maxAmountFormations < 0) || (amountFormations < user.maxAmountFormations)) ? 'Yes' : 'No'}</h2>
                     </div>
 
                     <div className="formations">
@@ -396,7 +396,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
                                     <p>{formation.id}</p>
                                 </button>
                             ))}
-                        {(amountFormations < user.maxAmountFormations) ? (
+                        {((user.maxAmountFormations < 0) || (amountFormations < user.maxAmountFormations)) ? (
                             <button
                                 className={selectedFormation && selectedFormation.id === -1 ? "active" : ""}
                                 onClick={() => {

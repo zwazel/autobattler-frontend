@@ -46,7 +46,8 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[], uni
                 Your id: {user.id}
             </p>
             <p>
-                You can create more units: {(amountUnits < user.maxAmountUnits) ? "Yes" : "No"}
+                You can create more
+                units: {((user.maxAmountUnits < 0) || (amountUnits < user.maxAmountUnits)) ? "Yes" : "No"}
             </p>
 
             <h2>Your units</h2>
@@ -98,7 +99,7 @@ export default function Profile(props: { user: User, unitTypes: UnitTypes[], uni
                         </tr>
                     )
                 })}
-                {(amountUnits < user.maxAmountUnits) ?
+                {((user.maxAmountUnits < 0) || (amountUnits < user.maxAmountUnits)) ?
                     <tr>
                         <td>
                             {newUnitType.customNamesAllowed ?
