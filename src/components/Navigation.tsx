@@ -40,7 +40,6 @@ export default function Navigation() {
         const jsonFormation = JSON.parse(json.formationJson);
         const unitsInFormation: Unit[] = [];
         for (let unitJson of jsonFormation) {
-            console.log(unitJson);
             const unitType = myUnitTypes.find(unitType => unitType.typeName === unitJson.type);
             if (unitType) {
                 const unit = units.find(unit => unit.id === unitJson.id);
