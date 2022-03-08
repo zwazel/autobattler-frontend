@@ -238,20 +238,30 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
                 }).then(response => {
                     if (response.ok) {
                         setSelectedFormation(null);
-                        return response.json();
+                        return {response: response.json(), success: true};
                     } else {
                         if (response.status === 400) {
-                            alert("Formation already exists!");
+                            return {response: response.text(), success: false};
                         } else {
                             alert("Something went wrong!");
                             throw new Error("Failed to save formation");
                         }
                     }
                 }).then(data => {
-                    const formation = getFormationFromJson(data, units);
-                    setFormations([...formations, formation]);
-                    user.amountFormations++;
-                    setAmountFormations(amountFormations + 1);
+                    if (data.success) {
+                        data.response.then(data => {
+                            console.log(data);
+                            const formation = getFormationFromJson(data, units);
+                            setFormations([...formations, formation]);
+                            user.amountFormations++;
+                            setAmountFormations(amountFormations + 1);
+                        });
+                    } else {
+                        data.response.then(data => {
+                            console.log(data)
+                            alert(data);
+                        });
+                    }
                 })
             } else {
                 alert("You can't have more than " + user.maxAmountFormations + " formations!");
