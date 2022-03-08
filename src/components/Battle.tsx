@@ -1,7 +1,6 @@
 import UnitTypes from "./classes/UnitTypes";
 import React, {useCallback, useEffect, useState} from "react";
 import Position from "./classes/utils/Position";
-import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import Unit from "./classes/units/Unit";
 import {Formation} from "./Formations";
 import ParseUnitType from "./classes/utils/ParseUnitType";
@@ -12,15 +11,15 @@ import Rectangle from "./pixi/graphics/Rectangle";
 import Loader from "./Loader";
 import UnitSprite from "./pixi/graphics/UnitSprite";
 
-export default function Battle(props: { unitTypes: UnitTypes[] }) {
+export default function Battle(props: { unitTypes: UnitTypes[], formations: Formation[] }) {
     const unitTypes = props.unitTypes;
+    const formations = props.formations;
 
     const [selectedFormation, setSelectedFormation] = useState<Formation>();
     const [stageSize, setStageSize] = useState<Position>(new Position(0, 0));
     const [gridCellSize, setGridCellSize] = useState<number>(0);
     const [done, setDone] = useState<boolean>(false);
     const [loaded, setLoaded] = useState<boolean>(false);
-    const [formations, setFormations] = useState<Formation[]>([]);
     const [winner, setWinner] = useState<string>();
     const [enemyFormation, setEnemyFormation] = useState<Formation>();
     const [doneLoadingBattle, setDoneLoadingBattle] = useState<boolean>(true);
@@ -86,34 +85,9 @@ export default function Battle(props: { unitTypes: UnitTypes[] }) {
             .then(data => {
                 const gridSize = new Position(data.width, data.height);
                 scalePlayField(gridSize);
+                setLoaded(true);
             })
-            .then(() => {
-                GetAllUnitsOfUser(unitTypes).then(units => {
-                    return units;
-                })
-                    // fetch all formations of the user, and add them to the array with their units
-                    .then((units: Unit[]) => {
-                        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
-                            method: "GET",
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'application/json',
-                            },
-                            credentials: 'include',
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                const formations: Formation[] = [];
-                                for (let json of data) {
-                                    const formation = getFormationFromJson(json, units);
-                                    formations.push(formation);
-                                }
-                                setFormations(formations);
-                                setLoaded(true);
-                            })
-                    });
-            })
-    }, [getFormationFromJson, unitTypes]);
+    }, []);
 
     const getUnitSprite = (props: { unit: Unit }) => {
         if (selectedFormation) {

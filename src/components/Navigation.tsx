@@ -5,14 +5,18 @@ import Signup from "./auth/Signup";
 import Profile from "./Profile";
 import {Button} from "react-bootstrap";
 import User from "./classes/User";
-import React, {useEffect, useState} from "react";
-import Formations from "./Formations";
+import React, {useCallback, useEffect, useState} from "react";
+import Formations, {Formation} from "./Formations";
 import ProfileHeader from "./ProfileHeader";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
 import GetServerInfos from "./misc/GetServerInfos";
 import UnitTypes from "./classes/UnitTypes";
 import Battle from "./Battle";
+import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
+import Unit from "./classes/units/Unit";
+import ParseUnitType from "./classes/utils/ParseUnitType";
+import Position from "./classes/utils/Position";
 
 interface userInfos {
     username: string,
@@ -25,10 +29,38 @@ interface userInfos {
 
 export default function Navigation() {
     const [user, setUser] = React.useState<User>(new User(-1, "undefined", false, -1, -1, -1, -1));
+    const [unitTypes, setUnitTypes] = useState<UnitTypes[]>([]);
+    const [units, setUnits] = useState<Unit[]>([]);
+    const [formations, setFormations] = useState<Formation[]>([]);
 
     const [loading, setLoading] = useState(true);
 
-    const [unitTypes, setUnitTypes] = useState<UnitTypes[]>([]);
+    const getFormationFromJson = useCallback((json: any, units: Unit[], myUnitTypes: UnitTypes[]) => {
+        const formationID = json.id;
+        const jsonFormation = JSON.parse(json.formationJson);
+        const unitsInFormation: Unit[] = [];
+        for (let unitJson of jsonFormation) {
+            console.log(unitJson);
+            const unitType = myUnitTypes.find(unitType => unitType.typeName === unitJson.type);
+            if (unitType) {
+                const unit = units.find(unit => unit.id === unitJson.id);
+                if (unit) {
+                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                    newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
+                    unitsInFormation.push(newUnit);
+                } else {
+                    throw new Error("unit not found");
+                }
+            } else {
+                throw new Error("UnitType not found");
+            }
+        }
+        const formation: Formation = {
+            id: formationID,
+            units: unitsInFormation,
+        };
+        return formation;
+    }, []);
 
     // checks if the user is logged in
     useEffect(() => {
@@ -80,33 +112,68 @@ export default function Navigation() {
                         })
                         .then(r => {
                             if (r.length === 0) {
+                                throw new Error("No unit types found");
                             } else {
                                 let newUnitTypes: UnitTypes[] = [];
                                 for (let type of r) {
                                     newUnitTypes.push(new UnitTypes(type.customNamesAllowed, type.name, type.defaultName));
                                 }
                                 setUnitTypes(newUnitTypes);
+                                return newUnitTypes;
                             }
-                            setLoading(false);
+                        })
+                        .then((unitTypes: UnitTypes[]) => {
+                            GetAllUnitsOfUser(unitTypes).then(units => {
+                                setUnits(units);
+                                return {
+                                    units: units,
+                                    unitTypes: unitTypes,
+                                };
+                            })
+                                // fetch all formations of the user, and add them to the array with their units
+                                .then((props) => {
+                                    const units = props.units;
+                                    const unitTypes = props.unitTypes;
+                                    fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
+                                        method: "GET",
+                                        headers: {
+                                            Accept: 'application/json',
+                                            'Content-Type': 'application/json',
+                                        },
+                                        credentials: 'include',
+                                    })
+                                        .then(res => res.json())
+                                        .then(data => {
+                                            const formations: Formation[] = [];
+                                            for (let json of data) {
+                                                const formation = getFormationFromJson(json, units, unitTypes);
+                                                formations.push(formation);
+                                            }
+                                            setFormations(formations);
+                                            setLoading(false);
+                                        })
+                                });
                         })
                 }
             })
-    }, []);
+    }, [getFormationFromJson]);
 
     return (
         <div>
             {loading ?
                 <Loader/>
                 :
-                <NavigationCaller user={user} unitTypes={unitTypes}/>
+                <NavigationCaller user={user} formations={formations} units={units} unitTypes={unitTypes}/>
             }
         </div>
     );
 }
 
-function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
+function NavigationCaller(props: { user: User, units: Unit[], formations: Formation[], unitTypes: UnitTypes[] }) {
     const user = props.user;
     const unitTypes = props.unitTypes;
+    const units = props.units;
+    const formations = props.formations;
 
     async function logout(): Promise<boolean> {
         let success: boolean = false;
@@ -214,9 +281,10 @@ function NavigationCaller(props: { user: User, unitTypes: UnitTypes[] }) {
                        element={user.loggedIn ? <Navigate to={"/profile/"} replace={true}/> : <Signup/>}/>
                 <Route path={"/profile/*"} element={!user.loggedIn ? <Navigate to={"/sign-in"} replace={true}/> :
                     <ProfileHeader user={user}/>}>
-                    <Route path={""} element={<Profile user={user} unitTypes={unitTypes}/>}/>
-                    <Route path={"formations/"} element={<Formations user={user} unitTypes={unitTypes}/>}/>
-                    <Route path={"battle/"} element={<Battle unitTypes={unitTypes}/>}/>
+                    <Route path={""} element={<Profile units={units} user={user} unitTypes={unitTypes}/>}/>
+                    <Route path={"formations/"} element={<Formations formations={formations} units={units} user={user}
+                                                                     unitTypes={unitTypes}/>}/>
+                    <Route path={"battle/"} element={<Battle formations={formations} unitTypes={unitTypes}/>}/>
                 </Route>
                 <Route path={"/loader"} element={<Loader/>}/>
                 <Route path={"/serverInfos"} element={<GetServerInfos/>}/>

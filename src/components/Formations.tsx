@@ -8,7 +8,6 @@ import Viewport from "./pixi/Viewport";
 import Rectangle from "./pixi/graphics/Rectangle";
 import Draggable from "./pixi/Draggable";
 import Grid from "./pixi/Grid";
-import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import IsPositionFree from "./utils/IsPositionFree";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import {confirmAlert} from 'react-confirm-alert';
@@ -27,15 +26,15 @@ export enum Mode {
     IDLE = 'IDLE'
 }
 
-export default function Formations(props: { user: User, unitTypes: UnitTypes[] }) {
+export default function Formations(props: { user: User, unitTypes: UnitTypes[], units: Unit[], formations: Formation[] }) {
     const unitTypes = props.unitTypes;
     const user = props.user;
+    const units = props.units;
 
     const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [loaded, setLoaded] = useState<boolean>(false);
     const [done, setDone] = useState<boolean>(false);
-    const [units, setUnits] = useState<Unit[]>([]);
-    const [formations, setFormations] = useState<Formation[]>([]);
+    const [formations, setFormations] = useState<Formation[]>(props.formations);
     const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
     const [stageSize, setStageSize] = useState<Position>(new Position(-1, -1));
     const [gridCellSize, setGridCellSize] = useState<number>(64);
@@ -98,33 +97,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
             .then(data => {
                 const gridSize = new Position(data.width, data.height);
                 scalePlayField(gridSize);
-            })
-            .then(() => {
-                GetAllUnitsOfUser(unitTypes).then(units => {
-                    setUnits(units);
-                    return units;
-                })
-                    // fetch all formations of the user, and add them to the array with their units
-                    .then((units: Unit[]) => {
-                        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/authenticated/user/getAllFormations`, {
-                            method: "GET",
-                            headers: {
-                                Accept: 'application/json',
-                                'Content-Type': 'application/json',
-                            },
-                            credentials: 'include',
-                        })
-                            .then(res => res.json())
-                            .then(data => {
-                                const formations: Formation[] = [];
-                                for (let json of data) {
-                                    const formation = getFormationFromJson(json, units);
-                                    formations.push(formation);
-                                }
-                                setFormations(formations);
-                                setLoaded(true);
-                            })
-                    });
+                setLoaded(true);
             })
     }, [getFormationFromJson, unitTypes]);
 
@@ -277,6 +250,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
                 }).then(data => {
                     const formation = getFormationFromJson(data, units);
                     setFormations([...formations, formation]);
+                    user.amountFormations++;
                     setAmountFormations(amountFormations + 1);
                 })
             } else {
@@ -369,6 +343,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[] }
 
                                         setSelectedFormation(null);
 
+                                        user.amountFormations--;
                                         setAmountFormations(amountFormations - 1);
                                     } else {
                                         throw new Error("Failed to delete formation");
