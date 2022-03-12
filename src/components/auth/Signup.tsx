@@ -2,21 +2,7 @@ import React, {useEffect, useState} from "react";
 import Form from "react-bootstrap/Form";
 import {Button} from "react-bootstrap";
 import Loader from "../Loader";
-
-interface userLoginInfos {
-    usernameMinLength: number;
-    usernameMaxLength: number;
-    passwordMinLength: number;
-    passwordMaxLength: number;
-    rememberMeTimes: rememberMeTime[];
-}
-
-interface rememberMeTime {
-    time: number;
-    text: string;
-    ordinal: number;
-    name: string;
-}
+import GetAuthInfos, {rememberMeTime, userLoginInfos} from "../classes/utils/GetAuthInfos";
 
 export default function Signup() {
     const [username, setUsername] = useState("");
@@ -33,17 +19,15 @@ export default function Signup() {
     const [doneLoading, setDoneLoading] = useState(false);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/public/server/userLoginInfo`)
-            .then(r => r.json())
-            .then(r => {
-                setUserLoginInfo(r);
-                if(r.rememberMeTimes.length > 0) {
-                    setSelectedRememberMeTime(r.rememberMeTimes[0]);
-                } else {
-                    alert("fuck")
-                }
-                setDoneLoading(true);
-            })
+        GetAuthInfos().then((response) => {
+            setUserLoginInfo(response);
+            if (response.rememberMeTimes.length > 0) {
+                setSelectedRememberMeTime(response.rememberMeTimes[0]);
+            } else {
+                alert("No remember me times available?!?");
+            }
+            setDoneLoading(true);
+        });
     }, []);
 
     function validateForm() {
@@ -62,7 +46,6 @@ export default function Signup() {
             'confirmPassword': confirmPassword,
             'rememberMeTime': name,
         });
-        console.log(data);
 
         const response = await fetch(`${process.env.REACT_APP_FETCH_CALL_DOMAIN}/auth/signup`, {
             method: "POST",
