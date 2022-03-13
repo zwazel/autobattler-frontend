@@ -18,7 +18,7 @@ import ParseUnitType from "./classes/utils/ParseUnitType";
 import Position from "./classes/utils/Position";
 import {FormationInterface} from "./utils/FormationInterface";
 import Formations from "./Formations";
-import { DragDropContext } from 'react-beautiful-dnd';
+import {DragDropContext} from 'react-beautiful-dnd';
 
 interface userInfos {
     username: string,
@@ -54,8 +54,35 @@ export default function Navigation() {
     }, []);
 
     const onDragEnd = useCallback((e) => {
+        const sourceIndex = e.source.index;
+        const destinationIndex = e.destination.index;
 
-    }, []);
+        console.log("event", e);
+        console.log("source,destination", sourceIndex, destinationIndex);
+
+        if (sourceIndex === destinationIndex) {
+            return;
+        }
+
+        console.log("units before", units);
+
+        console.log("going through all units")
+        const tempUnits = [...units];
+        for (let unit of tempUnits) {
+            if (unit.priority === sourceIndex) {
+                unit.priority = destinationIndex;
+                console.log(unit, "updating priority to destination index " + destinationIndex);
+            } else if (unit.priority <= destinationIndex) {
+                unit.priority = unit.priority - 1;
+                console.log(unit, "reducing priority by one " + unit.priority);
+            }
+        }
+
+        // updating units
+        setUnits(tempUnits);
+
+        console.log("units after", units);
+    }, [units]);
 
     const getFormationFromJson = useCallback((json: any, units: Unit[], myUnitTypes: UnitTypes[]) => {
         const formationID = json.id;
@@ -66,7 +93,7 @@ export default function Navigation() {
             if (unitType) {
                 const unit = units.find(unit => unit.id === unitJson.id);
                 if (unit) {
-                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.priority, unit.side, unit.position, unit.dateCollected);
+                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unitJson.priority, unit.side, unit.position, unit.dateCollected);
                     newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                     unitsInFormation.push(newUnit);
                 } else {
@@ -80,6 +107,8 @@ export default function Navigation() {
             id: formationID,
             units: unitsInFormation,
         };
+
+        console.log(formation);
         return formation;
     }, []);
 

@@ -4,6 +4,15 @@ import {Draggable, Droppable} from "react-beautiful-dnd";
 export default function UnitPriorityDraggableList(props: { units: Unit[] }) {
     const {units} = props;
 
+    const getIndex = (unit: Unit, index: number) => {
+        if (unit.priority < 0) {
+            unit.priority = index;
+            return index;
+        } else {
+            return unit.priority - 1;
+        }
+    }
+
     return (
         <Droppable
             droppableId="unit-priority-list"
@@ -28,7 +37,7 @@ export default function UnitPriorityDraggableList(props: { units: Unit[] }) {
                         <Draggable
                             key={unit.id}
                             draggableId={"" + unit.id}
-                            index={(unit.priority < 0) ? index : unit.priority}
+                            index={getIndex(unit, index)}
                         >
                             {(provided, snapshot) => (
                                 <div
@@ -43,7 +52,7 @@ export default function UnitPriorityDraggableList(props: { units: Unit[] }) {
                                         backgroundColor: snapshot.isDragging ? "#ff0000" : "aqua",
                                     }}
                                 >
-                                    {unit.name}
+                                    {`${unit.name} (${unit.priority}) (${index})`}
                                 </div>
                             )}
                         </Draggable>
