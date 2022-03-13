@@ -14,11 +14,8 @@ import {confirmAlert} from 'react-confirm-alert';
 import '../assets/css/confirm-alert.css'
 import User from "./classes/User";
 import {Col, Container as BootstrapContainer, Row} from "react-bootstrap";
-
-export interface Formation {
-    id: number;
-    units: Unit[];
-}
+import {FormationInterface} from "./utils/FormationInterface";
+import UnitPriorityDraggableList from "./classes/utils/UnitPriorityDraggableList";
 
 export enum Mode {
     ADD = 'ADD',
@@ -26,7 +23,7 @@ export enum Mode {
     IDLE = 'IDLE'
 }
 
-export default function Formations(props: { user: User, unitTypes: UnitTypes[], units: Unit[], formations: Formation[] }) {
+export default function Formations(props: { user: User, unitTypes: UnitTypes[], units: Unit[], formations: FormationInterface[] }) {
     const unitTypes = props.unitTypes;
     const user = props.user;
     const units = props.units;
@@ -34,8 +31,8 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
     const [gridSize, setGridSize] = useState<Position>(new Position(0, 0));
     const [loaded, setLoaded] = useState<boolean>(false);
     const [done, setDone] = useState<boolean>(false);
-    const [formations, setFormations] = useState<Formation[]>(props.formations);
-    const [selectedFormation, setSelectedFormation] = useState<Formation | null>(null);
+    const [formations, setFormations] = useState<FormationInterface[]>(props.formations);
+    const [selectedFormation, setSelectedFormation] = useState<FormationInterface | null>(null);
     const [stageSize, setStageSize] = useState<Position>(new Position(-1, -1));
     const [gridCellSize, setGridCellSize] = useState<number>(64);
     const [mode, setMode] = useState<Mode>(Mode.IDLE);
@@ -67,7 +64,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
             if (unitType) {
                 const unit = units.find(unit => unit.id === unitJson.id);
                 if (unit) {
-                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.priority, unit.side, unit.position, unit.dateCollected);
                     newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                     unitsInFormation.push(newUnit);
                 } else {
@@ -77,7 +74,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
                 throw new Error("UnitType not found");
             }
         }
-        const formation: Formation = {
+        const formation: FormationInterface = {
             id: formationID,
             units: unitsInFormation,
         };
@@ -175,7 +172,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
         }
     }
 
-    function FormationUnitManagement(props: { selectedFormation: Formation | null, mode: Mode, units: Unit[] }) {
+    function FormationUnitManagement(props: { selectedFormation: FormationInterface | null, mode: Mode, units: Unit[] }) {
         const {selectedFormation, mode, units} = props;
 
         return (
@@ -207,7 +204,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
         }
     }
 
-    function saveFormation(formation: Formation) {
+    function saveFormation(formation: FormationInterface) {
         if (formation.units.length > 0) {
             if ((user.maxAmountFormations < 0) || (user.amountFormations < user.maxAmountFormations)) {
                 const unitData = [];
@@ -269,7 +266,7 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
         }
     }
 
-    function updateFormation(formation: Formation) {
+    function updateFormation(formation: FormationInterface) {
         if (formation.units.length > 0) {
             const unitData = [];
             let priorityCounter = 1;
@@ -511,7 +508,11 @@ export default function Formations(props: { user: User, unitTypes: UnitTypes[], 
                                     </Stage>
                                 </Col>
                                 <Col>
-                                    <p>HELLO</p>
+                                    {selectedFormation ? (
+                                        <UnitPriorityDraggableList units={selectedFormation.units}/>
+                                    ) : (
+                                        <></>
+                                    )}
                                 </Col>
                             </Row>
                         </BootstrapContainer>

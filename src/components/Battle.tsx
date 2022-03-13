@@ -2,7 +2,6 @@ import UnitTypes from "./classes/UnitTypes";
 import React, {useCallback, useEffect, useState} from "react";
 import Position from "./classes/utils/Position";
 import Unit from "./classes/units/Unit";
-import {Formation} from "./Formations";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import {Container, Stage} from "@inlet/react-pixi";
 import Grid from "./pixi/Grid";
@@ -10,18 +9,19 @@ import Viewport from "./pixi/Viewport";
 import Rectangle from "./pixi/graphics/Rectangle";
 import Loader from "./Loader";
 import UnitSprite from "./pixi/graphics/UnitSprite";
+import {FormationInterface} from "./utils/FormationInterface";
 
-export default function Battle(props: { unitTypes: UnitTypes[], formations: Formation[] }) {
+export default function Battle(props: { unitTypes: UnitTypes[], formations: FormationInterface[] }) {
     const unitTypes = props.unitTypes;
     const formations = props.formations;
 
-    const [selectedFormation, setSelectedFormation] = useState<Formation>();
+    const [selectedFormation, setSelectedFormation] = useState<FormationInterface>();
     const [stageSize, setStageSize] = useState<Position>(new Position(0, 0));
     const [gridCellSize, setGridCellSize] = useState<number>(0);
     const [done, setDone] = useState<boolean>(false);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [winner, setWinner] = useState<string>();
-    const [enemyFormation, setEnemyFormation] = useState<Formation>();
+    const [enemyFormation, setEnemyFormation] = useState<FormationInterface>();
     const [doneLoadingBattle, setDoneLoadingBattle] = useState<boolean>(true);
 
     const scalePlayField = (gridSize: Position) => {
@@ -50,14 +50,14 @@ export default function Battle(props: { unitTypes: UnitTypes[], formations: Form
                 if (units) {
                     const unit = units.find(unit => unit.id === unitJson.id);
                     if (unit) {
-                        const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                        const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.priority, unit.side, unit.position, unit.dateCollected);
                         newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                         unitsInFormation.push(newUnit);
                     } else {
                         throw new Error("unit not found");
                     }
                 } else {
-                    const newUnit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, unitJson.side, unitJson.position);
+                    const newUnit = ParseUnitType(unitType, unitJson.name, unitJson.level, unitJson.id, unitJson.priority, unitJson.side, unitJson.position);
                     newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                     unitsInFormation.push(newUnit);
                 }
@@ -65,7 +65,7 @@ export default function Battle(props: { unitTypes: UnitTypes[], formations: Form
                 throw new Error("UnitType not found");
             }
         }
-        const formation: Formation = {
+        const formation: FormationInterface = {
             id: formationID,
             units: unitsInFormation,
         };

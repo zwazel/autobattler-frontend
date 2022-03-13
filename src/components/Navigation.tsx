@@ -6,7 +6,6 @@ import Profile from "./Profile";
 import {Button} from "react-bootstrap";
 import User from "./classes/User";
 import React, {useCallback, useEffect, useState} from "react";
-import Formations, {Formation} from "./Formations";
 import ProfileHeader from "./ProfileHeader";
 import Loader from "./Loader";
 import NotFound from "./NotFound";
@@ -17,6 +16,9 @@ import GetAllUnitsOfUser from "./classes/utils/GetAllUnitsOfUser";
 import Unit from "./classes/units/Unit";
 import ParseUnitType from "./classes/utils/ParseUnitType";
 import Position from "./classes/utils/Position";
+import {FormationInterface} from "./utils/FormationInterface";
+import Formations from "./Formations";
+import { DragDropContext } from 'react-beautiful-dnd';
 
 interface userInfos {
     username: string,
@@ -31,9 +33,29 @@ export default function Navigation() {
     const [user, setUser] = React.useState<User>(new User(-1, "undefined", false, -1, -1, -1, -1));
     const [unitTypes, setUnitTypes] = useState<UnitTypes[]>([]);
     const [units, setUnits] = useState<Unit[]>([]);
-    const [formations, setFormations] = useState<Formation[]>([]);
+    const [formations, setFormations] = useState<FormationInterface[]>([]);
 
     const [loading, setLoading] = useState(true);
+
+    const onBeforeCapture = useCallback((e) => {
+
+    }, []);
+
+    const onBeforeDragStart = useCallback((e) => {
+
+    }, []);
+
+    const onDragStart = useCallback((e) => {
+
+    }, []);
+
+    const onDragUpdate = useCallback((e) => {
+
+    }, []);
+
+    const onDragEnd = useCallback((e) => {
+
+    }, []);
 
     const getFormationFromJson = useCallback((json: any, units: Unit[], myUnitTypes: UnitTypes[]) => {
         const formationID = json.id;
@@ -44,7 +66,7 @@ export default function Navigation() {
             if (unitType) {
                 const unit = units.find(unit => unit.id === unitJson.id);
                 if (unit) {
-                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.side, unit.position, unit.dateCollected);
+                    const newUnit = ParseUnitType(unitType, unit.name, unit.level, unit.id, unit.priority, unit.side, unit.position, unit.dateCollected);
                     newUnit.position = new Position(unitJson.position.x + 1, unitJson.position.y + 1);
                     unitsInFormation.push(newUnit);
                 } else {
@@ -54,7 +76,7 @@ export default function Navigation() {
                 throw new Error("UnitType not found");
             }
         }
-        const formation: Formation = {
+        const formation: FormationInterface = {
             id: formationID,
             units: unitsInFormation,
         };
@@ -143,7 +165,7 @@ export default function Navigation() {
                                     })
                                         .then(res => res.json())
                                         .then(data => {
-                                            const formations: Formation[] = [];
+                                            const formations: FormationInterface[] = [];
                                             for (let json of data) {
                                                 const formation = getFormationFromJson(json, units, unitTypes);
                                                 formations.push(formation);
@@ -158,17 +180,23 @@ export default function Navigation() {
     }, [getFormationFromJson]);
 
     return (
-        <div>
+        <DragDropContext
+            onBeforeCapture={onBeforeCapture}
+            onBeforeDragStart={onBeforeDragStart}
+            onDragStart={onDragStart}
+            onDragUpdate={onDragUpdate}
+            onDragEnd={onDragEnd}
+        >
             {loading ?
                 <Loader/>
                 :
                 <NavigationCaller user={user} formations={formations} units={units} unitTypes={unitTypes}/>
             }
-        </div>
+        </DragDropContext>
     );
 }
 
-function NavigationCaller(props: { user: User, units: Unit[], formations: Formation[], unitTypes: UnitTypes[] }) {
+function NavigationCaller(props: { user: User, units: Unit[], formations: FormationInterface[], unitTypes: UnitTypes[] }) {
     const user = props.user;
     const unitTypes = props.unitTypes;
     const units = props.units;

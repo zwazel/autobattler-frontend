@@ -18,13 +18,13 @@ export default async function GetAllUnitsOfUser(unitTypes: UnitTypes[]): Promise
         for (let jsonUnit of r) {
             const unitType = unitTypes.find(ut => ut.typeName === jsonUnit.unitType);
             if (unitType) {
-                let unit = ParseUnitType(unitType, jsonUnit.name, jsonUnit.level, jsonUnit.id, undefined, undefined, jsonUnit.dateCollected);
+                let unit = ParseUnitType(unitType, jsonUnit.name, jsonUnit.level, jsonUnit.id, undefined, undefined, undefined, jsonUnit.dateCollected);
                 units.push(unit);
             } else {
                 throw new Error(`Unit type ${jsonUnit.unitType} not found`);
             }
         }
     });
-    
+
     return units;
 }
